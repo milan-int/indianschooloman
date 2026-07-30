@@ -1,0 +1,43 @@
+<div class="modal-overlay">
+  <div class="modal-container" [formGroup]="formService.form">
+    <div class="modal-header">
+      <h2>Select School Preferences</h2>
+    </div>
+    
+    <div class="modal-body">
+      <div class="alert">
+        Available schools change based on your selected Class. You can select up to {{ preferenceCount }} schools.
+      </div>
+
+      <div formArrayName="schoolPreferences">
+        <div class="form-group flex-2" *ngFor="let control of schoolPreferences.controls; let i = index" style="margin-bottom: 1rem;">
+          <label>
+            School Preference {{ i + 1 }} <span *ngIf="i === 0" class="required">*</span>
+            <button *ngIf="i > 0" type="button" class="btn-remove" (click)="removePreference(i)" style="float: right; background: none; border: none; color: #ef4444; cursor: pointer;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Remove
+            </button>
+          </label>
+          <select [formControlName]="i" [class.invalid]="control.invalid && control.touched">
+            <option value="">Select Preference {{ i + 1 }}</option>
+            <option *ngFor="let school of availableSchools" [value]="school" [disabled]="isSchoolSelected(school, i)">
+              {{school}} {{ isSchoolSelected(school, i) ? '(Already Selected)' : '' }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="schoolPreferences.length < preferenceCount">
+        <button type="button" class="btn-secondary" (click)="addPreference()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add School Preference (Max: {{ preferenceCount }})
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn-submit" (click)="onSave()">Save Preferences</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,116 @@
+<div class="registration-container">
+  <div class="header" style="text-align: center; padding: 20px 0;">
+    <img src="assets/logo.png" alt="Board of Directors Indian Schools, Sultanate of Oman" style="width: 100%; max-width: 800px; height: auto; mix-blend-mode: multiply;" />
+  </div>
+
+  <app-school-preference-modal 
+    *ngIf="showPreferencesModal"
+    [availableSchools]="availableSchools"
+    [preferenceCount]="preferenceCount"
+    (close)="onPreferencesModalClose($event)">
+  </app-school-preference-modal>
+
+  <app-preview-modal
+    *ngIf="showPreviewModal"
+    [data]="form.value"
+    [isSubmitting]="isSubmitting"
+    (cancel)="showPreviewModal = false"
+    (confirm)="onConfirmSubmit()">
+  </app-preview-modal>
+
+  <div class="form-card">
+    <!-- Progress Indicator -->
+    <div class="progress-container">
+      <div class="progress-step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Pupil</div>
+      </div>
+      <div class="progress-line" [class.completed]="currentStep > 1"></div>
+      <div class="progress-step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Parent</div>
+      </div>
+      <div class="progress-line" [class.completed]="currentStep > 2"></div>
+      <div class="progress-step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Contact</div>
+      </div>
+      <div class="progress-line" [class.completed]="currentStep > 3"></div>
+      <div class="progress-step" [class.active]="currentStep === 4" [class.completed]="currentStep > 4">
+        <div class="step-circle">4</div>
+        <div class="step-label">Finish</div>
+      </div>
+    </div>
+
+    <div class="alert success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      {{ successMessage }}
+    </div>
+    <div class="alert error" *ngIf="errorMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      
+      <!-- STEPS -->
+      <app-step1-pupil *ngIf="currentStep === 1" 
+        [classes]="classes" 
+        [languages]="languages" 
+        [nationalities]="nationalities" 
+        [countries]="countries"
+        [genders]="genders"
+        (editPreferences)="showPreferencesModal = true">
+      </app-step1-pupil>
+
+      <app-step2-parent *ngIf="currentStep === 2"
+        [relationships]="relationships"
+        [nationalities]="nationalities">
+      </app-step2-parent>
+
+      <app-step3-contact *ngIf="currentStep === 3"
+        [postalCodes]="postalCodes">
+      </app-step3-contact>
+
+      <app-step4-application 
+          *ngIf="currentStep === 4" 
+          [availableSchools]="availableSchools"
+          [allSchools]="allSchoolsMaster"
+          [preferenceCount]="preferenceCount"
+          [relationships]="relationships"
+          [availableClasses]="classes"
+          [siblingRelationships]="siblingRelationships"
+          [siblingSchools]="siblingSchools"
+          [siblingClasses]="siblingClasses">
+        </app-step4-application>
+
+      <!-- FOOTER ACTIONS -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" *ngIf="currentStep > 1" (click)="previousStep()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </button>
+        
+        <button type="button" class="btn-submit" *ngIf="currentStep < 4" (click)="nextStep()">
+          Next
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+
+        <button type="submit" class="btn-submit" *ngIf="currentStep === 4" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting">
+            <svg class="spinner" viewBox="0 0 50 50" style="width: 20px; height: 20px; animation: rotate 2s linear infinite;"><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-dasharray="1, 200" stroke-dashoffset="0" stroke-linecap="round" style="animation: dash 1.5s ease-in-out infinite;"></circle></svg>
+          </span>
+          <span *ngIf="!isSubmitting">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </span>
+          Review & Submit
+        </button>
+      </div>
+      
+      <style>
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        @keyframes dash { 0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; } 50% { stroke-dasharray: 89, 200; stroke-dashoffset: -35px; } 100% { stroke-dasharray: 89, 200; stroke-dashoffset: -124px; } }
+      </style>
+    </form>
+  </div>
+</div>

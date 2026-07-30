@@ -1,0 +1,97 @@
+      <div [formGroup]="form" class="fade-in">
+        <h3 class="section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Pupil Details
+        </h3>
+        
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label>Name of the Pupil (As per Passport) <span class="required">*</span></label>
+            <div class="inline-fields">
+              <input type="text" placeholder="Given Name" formControlName="pupilFirstName" [class.invalid]="form.get('pupilFirstName')?.invalid && form.get('pupilFirstName')?.touched">
+              <input type="text" placeholder="Surname" formControlName="pupilSurname">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Passport Number <span class="required">*</span></label>
+            <input type="text" placeholder="Passport No." formControlName="passportNumber" [class.invalid]="form.get('passportNumber')?.invalid && form.get('passportNumber')?.touched">
+            <div class="error-message" *ngIf="form.get('passportNumber')?.errors?.['duplicate'] && form.get('passportNumber')?.touched" style="color: red; font-size: 0.8rem; margin-top: 4px;">
+              This passport number is already registered.
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Expiry Date</label>
+            <input type="date" formControlName="passportExpiryDate">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Admission sought for class <span class="required">*</span></label>
+            <div style="display: flex; gap: 0.5rem;">
+              <select formControlName="classSought" [class.invalid]="form.get('classSought')?.invalid && form.get('classSought')?.touched" style="flex: 1;">
+                <option value="">Select Class</option>
+                <option *ngFor="let cls of classes" [value]="cls">{{cls}}</option>
+              </select>
+              <button *ngIf="form.get('classSought')?.value" type="button" class="btn-secondary" (click)="editPreferences.emit()" style="padding: 0.5rem; margin: 0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select formControlName="sex">
+              <option *ngFor="let gender of genders" [value]="gender.name">{{gender.name}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nationality</label>
+            <select formControlName="nationality">
+              <option *ngFor="let nat of nationalities" [value]="nat.name">{{nat.name}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mother Tongue <span class="required">*</span></label>
+            <select formControlName="motherTongue" [class.invalid]="form.get('motherTongue')?.invalid && form.get('motherTongue')?.touched">
+              <option value="">Select Language</option>
+              <option *ngFor="let lang of languages" [value]="lang.name">{{lang.name}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Visa No.</label>
+            <input type="text" placeholder="Visa Number" formControlName="visaNumber">
+          </div>
+          <div class="form-group">
+            <label>Visa Expiry Date</label>
+            <input type="date" formControlName="visaExpiryDate">
+          </div>
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" formControlName="dateOfBirth">
+          </div>
+          <div class="form-group">
+            <label>Place of Birth <span class="required">*</span></label>
+            <input type="text" placeholder="City / Country" formControlName="placeOfBirth" [class.invalid]="form.get('placeOfBirth')?.invalid && form.get('placeOfBirth')?.touched">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label>Previous School (Name, Country, Class)</label>
+            <div class="inline-fields">
+              <input type="text" placeholder="School Name" formControlName="previousSchool">
+              <select formControlName="country">
+                <option value="">Country</option>
+                <option *ngFor="let c of countries" [value]="c.name">{{c.name}}</option>
+              </select>
+              <select formControlName="classLastAttended">
+                <option value="">Class</option>
+                <option *ngFor="let cls of classes" [value]="cls">{{cls}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>

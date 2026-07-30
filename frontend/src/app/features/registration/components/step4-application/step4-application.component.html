@@ -1,0 +1,118 @@
+      <div [formGroup]="form" class="fade-in">
+        <h3 class="section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Application Details
+        </h3>
+        
+        <div class="alert">
+          <strong>Class Applied For:</strong> {{ form.get('classSought')?.value || 'Not Selected' }}<br>
+          Below are the school preferences you selected in Step 1.
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <ul style="list-style-type: none; padding: 0; margin: 0;">
+              <li *ngFor="let control of schoolPreferences.controls; let i = index" style="padding: 0.75rem 1rem; background: #f1f5f9; margin-bottom: 0.5rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                <strong style="color: #1a56db;">Preference {{ i + 1 }}:</strong> 
+                {{ control.value || 'Not Selected' }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-top: 1rem;">
+          <div class="form-group flex-2">
+            <label style="margin-top: 8px;">Siblings currently studying in Indian Schools</label>
+          </div>
+          <div class="form-group">
+            <label>Total count</label>
+            <select formControlName="siblingsStudyingCount">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+            </select>
+          </div>
+        </div>
+
+        <div *ngIf="existingSiblings.length > 0" class="siblings-grid" formArrayName="existingSiblings">
+          <div class="grid-header cols-5">
+            <div>Sibling Name</div>
+            <div>School</div>
+            <div>GRNumber</div>
+            <div>Class</div>
+            <div>Division</div>
+          </div>
+          <div class="grid-row cols-5" *ngFor="let sibling of existingSiblings.controls; let i = index" [formGroupName]="i">
+            <div><input type="text" formControlName="siblingName"></div>
+            <div>
+              <select formControlName="schoolName">
+                <option value="">Select One</option>
+                <option *ngFor="let s of siblingSchools" [value]="s.name">{{s.name}}</option>
+              </select>
+            </div>
+            <div><input type="text" formControlName="grNumber"></div>
+            <div>
+              <select formControlName="className">
+                <option value="">Select One</option>
+                <option *ngFor="let c of siblingClasses" [value]="c.name">{{c.name}}</option>
+              </select>
+            </div>
+            <div>
+              <select formControlName="division">
+                <option value="">Select One</option>
+                <option *ngFor="let d of divisions" [value]="d">{{d}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-top: 2rem;">
+          <div class="form-group flex-2">
+            <label style="margin-top: 8px;">Other siblings seeking admission simultaneously</label>
+          </div>
+          <div class="form-group">
+            <label>Total count</label>
+            <select formControlName="siblingsSeekingAdmissionCount">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+            </select>
+          </div>
+        </div>
+
+        <div *ngIf="newApplicantSiblings.length > 0" class="siblings-grid" formArrayName="newApplicantSiblings">
+          <div class="grid-header cols-2">
+            <div>PassportNo</div>
+            <div>Relationship</div>
+          </div>
+          <div class="grid-row cols-2" *ngFor="let sibling of newApplicantSiblings.controls; let i = index" [formGroupName]="i">
+            <div><input type="text" formControlName="passportNo"></div>
+            <div>
+              <select formControlName="relationship">
+                <option value="">Select One</option>
+                <option *ngFor="let r of siblingRelationships" [value]="r.name">{{r.name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="declaration">
+          <h4>Declaration</h4>
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="declaration">
+            <span>I hereby confirm that all the information furnished above is correct to the best of my knowledge. I have completely read the instruction guidelines and agree to abide by the rules and regulations of the Indian Schools in Oman. I understand that submitting false information will lead to cancellation of this registration.</span>
+          </label>
+        </div>
+      </div>

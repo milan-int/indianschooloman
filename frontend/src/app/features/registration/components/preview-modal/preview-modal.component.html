@@ -1,0 +1,126 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Application Preview</h3>
+      <button class="close-btn" (click)="onCancel()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="preview-section">
+        <h4>Pupil Details</h4>
+        <div class="preview-grid">
+          <div class="preview-item"><strong>First Name:</strong> {{ data?.pupilFirstName }}</div>
+          <div class="preview-item"><strong>Surname:</strong> {{ data?.pupilSurname }}</div>
+          <div class="preview-item"><strong>Passport No:</strong> {{ data?.passportNumber }}</div>
+          <div class="preview-item"><strong>Passport Expiry:</strong> {{ data?.passportExpiryDate | date }}</div>
+          <div class="preview-item"><strong>Class Sought:</strong> {{ data?.classSought }}</div>
+          <div class="preview-item"><strong>Sex:</strong> {{ data?.sex }}</div>
+          <div class="preview-item"><strong>Nationality:</strong> {{ data?.nationality }}</div>
+          <div class="preview-item"><strong>Visa No:</strong> {{ data?.visaNumber }}</div>
+          <div class="preview-item"><strong>Visa Expiry:</strong> {{ data?.visaExpiryDate | date }}</div>
+          <div class="preview-item"><strong>Mother Tongue:</strong> {{ data?.motherTongue }}</div>
+          <div class="preview-item"><strong>Previous School:</strong> {{ data?.previousSchool }}</div>
+          <div class="preview-item"><strong>Country:</strong> {{ data?.country }}</div>
+          <div class="preview-item"><strong>Class Attended:</strong> {{ data?.classLastAttended }}</div>
+          <div class="preview-item"><strong>Date of Birth:</strong> {{ data?.dateOfBirth | date }}</div>
+          <div class="preview-item"><strong>Place of Birth:</strong> {{ data?.placeOfBirth }}</div>
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <h4>Parent Details</h4>
+        <div class="preview-grid">
+          <div class="preview-item"><strong>Name:</strong> {{ data?.parentName }}</div>
+          <div class="preview-item"><strong>Surname:</strong> {{ data?.parentSurname }}</div>
+          <div class="preview-item"><strong>Relationship:</strong> {{ data?.relationship }}</div>
+          <div class="preview-item"><strong>Passport No:</strong> {{ data?.parentPassportNo }}</div>
+          <div class="preview-item"><strong>Civil No:</strong> {{ data?.civilNo }}</div>
+          <div class="preview-item"><strong>Employer:</strong> {{ data?.employer }}</div>
+          <div class="preview-item"><strong>Occupation:</strong> {{ data?.occupation }}</div>
+          <div class="preview-item"><strong>Nationality:</strong> {{ data?.parentNationality }}</div>
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <h4>Contact & Address Details</h4>
+        <div class="preview-grid">
+          <div class="preview-item"><strong>Email:</strong> {{ data?.email }}</div>
+          <div class="preview-item"><strong>GSM:</strong> {{ data?.gsm }}</div>
+          <div class="preview-item"><strong>Residential Phone:</strong> {{ data?.residentialPhone }}</div>
+          <div class="preview-item"><strong>Office Phone:</strong> {{ data?.officePhone }}</div>
+          <div class="preview-item"><strong>Postal Code:</strong> {{ data?.postalCode }}</div>
+          <div class="preview-item"><strong>P.O. Box:</strong> {{ data?.poBox }}</div>
+          <div class="preview-item"><strong>Permanent Address:</strong> {{ data?.permanentAddress }}</div>
+          <div class="preview-item"><strong>House/Flat No:</strong> {{ data?.houseFlatNo }}</div>
+          <div class="preview-item"><strong>Way No:</strong> {{ data?.wayNo }}</div>
+          <div class="preview-item"><strong>Street Name:</strong> {{ data?.streetName }}</div>
+          <div class="preview-item"><strong>Locality:</strong> {{ data?.locality }}</div>
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <h4>Siblings & Preferences</h4>
+        
+        <h5>School Preferences</h5>
+        <div class="preview-list">
+          <div *ngFor="let pref of data?.schoolPreferences; let i = index">
+            <strong>Preference {{i + 1}}:</strong> {{ pref }}
+          </div>
+        </div>
+
+        <h5 *ngIf="data?.existingSiblings?.length > 0">Existing Siblings in Indian Schools</h5>
+        <table class="preview-table" *ngIf="data?.existingSiblings?.length > 0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>School</th>
+              <th>GR No</th>
+              <th>Class</th>
+              <th>Div</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sib of data?.existingSiblings">
+              <td>{{ sib.siblingName }}</td>
+              <td>{{ sib.schoolName }}</td>
+              <td>{{ sib.grNumber }}</td>
+              <td>{{ sib.className }}</td>
+              <td>{{ sib.division }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h5 *ngIf="data?.newApplicantSiblings?.length > 0">New Applicant Siblings</h5>
+        <table class="preview-table" *ngIf="data?.newApplicantSiblings?.length > 0">
+          <thead>
+            <tr>
+              <th>Passport No</th>
+              <th>Relationship</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sib of data?.newApplicantSiblings">
+              <td>{{ sib.passportNo }}</td>
+              <td>{{ sib.relationship }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="onCancel()" [disabled]="isSubmitting">Cancel</button>
+      <button class="btn-confirm" (click)="onConfirm()" [disabled]="isSubmitting">
+        <span *ngIf="isSubmitting">
+          <svg class="spinner" viewBox="0 0 50 50" style="width: 16px; height: 16px; margin-right: 5px; animation: rotate 2s linear infinite;"><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-dasharray="1, 200" stroke-dashoffset="0" stroke-linecap="round" style="animation: dash 1.5s ease-in-out infinite;"></circle></svg>
+          Submitting...
+        </span>
+        <span *ngIf="!isSubmitting">Confirm & Submit</span>
+      </button>
+    </div>
+  </div>
+</div>
+<style>
+  @keyframes rotate { 100% { transform: rotate(360deg); } }
+  @keyframes dash { 0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; } 50% { stroke-dasharray: 89, 200; stroke-dashoffset: -35px; } 100% { stroke-dasharray: 89, 200; stroke-dashoffset: -124px; } }
+</style>

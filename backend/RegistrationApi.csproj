@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Registration.Application\**" />
+    <Compile Remove="Registration.Domain\**" />
+    <Compile Remove="Registration.Infrastructure\**" />
+    <Content Remove="Registration.Application\**" />
+    <Content Remove="Registration.Domain\**" />
+    <Content Remove="Registration.Infrastructure\**" />
+    <EmbeddedResource Remove="Registration.Application\**" />
+    <EmbeddedResource Remove="Registration.Domain\**" />
+    <EmbeddedResource Remove="Registration.Infrastructure\**" />
+    <None Remove="Registration.Application\**" />
+    <None Remove="Registration.Domain\**" />
+    <None Remove="Registration.Infrastructure\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Registration.Application\Registration.Application.csproj" />
+    <ProjectReference Include="Registration.Infrastructure\Registration.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

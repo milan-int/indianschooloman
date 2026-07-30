@@ -1,0 +1,69 @@
+      <div [formGroup]="form" class="fade-in">
+        <h3 class="section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          Contact & Address Information
+        </h3>
+        
+        <div class="split-grid">
+          <!-- Phone & Email -->
+          <div>
+            <div class="address-header">Contact Numbers</div>
+            <div class="contact-row">
+              <label>Email Address <span class="required">*</span></label>
+              <input type="email" placeholder="email@example.com" formControlName="email" [class.invalid]="form.get('email')?.invalid && form.get('email')?.touched">
+            </div>
+            <div class="contact-row">
+              <label>GSM / Mobile <span class="required">*</span></label>
+              <input type="text" placeholder="+968..." formControlName="gsm" [class.invalid]="form.get('gsm')?.invalid && form.get('gsm')?.touched">
+            </div>
+            <div class="contact-row">
+              <label>Residential Phone</label>
+              <input type="text" placeholder="Home Phone" formControlName="residentialPhone">
+            </div>
+            <div class="contact-row">
+              <label>Office Phone</label>
+              <input type="text" placeholder="Work Phone" formControlName="officePhone">
+            </div>
+          </div>
+
+          <!-- Postal Address -->
+          <div>
+            <div class="address-header">Postal Address</div>
+            <div class="contact-row">
+              <label>Postal Code</label>
+              <select formControlName="postalCode">
+                <option *ngFor="let pc of postalCodes" [value]="pc.code">{{pc.code}}</option>
+              </select>
+            </div>
+            <div class="contact-row">
+              <label>P.O Box <span class="required">*</span></label>
+              <input type="text" placeholder="P.O Box" formControlName="poBox" [class.invalid]="form.get('poBox')?.invalid && form.get('poBox')?.touched">
+            </div>
+            <div class="contact-row">
+              <label>Permanent Address <span class="required">*</span></label>
+              <textarea placeholder="Full Permanent Address" formControlName="permanentAddress" [class.invalid]="form.get('permanentAddress')?.invalid && form.get('permanentAddress')?.touched"></textarea>
+            </div>
+          </div>
+
+          <!-- Oman Address -->
+          <div>
+            <div class="address-header">Residential Address in Oman</div>
+            <div class="contact-row">
+              <label>House / Flat No. <span class="required">*</span></label>
+              <input type="text" placeholder="House No." formControlName="houseFlatNo" [class.invalid]="form.get('houseFlatNo')?.invalid && form.get('houseFlatNo')?.touched">
+            </div>
+            <div class="contact-row">
+              <label>Lane / Way No. <span class="required">*</span></label>
+              <input type="text" placeholder="Way No." formControlName="wayNo" [class.invalid]="form.get('wayNo')?.invalid && form.get('wayNo')?.touched">
+            </div>
+            <div class="contact-row">
+              <label>Street Name <span class="required">*</span></label>
+              <input type="text" placeholder="Street Name" formControlName="streetName" [class.invalid]="form.get('streetName')?.invalid && form.get('streetName')?.touched">
+            </div>
+            <div class="contact-row">
+              <label>Locality <span class="required">*</span></label>
+              <input type="text" placeholder="Area / Locality" formControlName="locality" [class.invalid]="form.get('locality')?.invalid && form.get('locality')?.touched">
+            </div>
+          </div>
+        </div>
+      </div>
