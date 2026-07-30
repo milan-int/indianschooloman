@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MasterDataResponse, CountryMaster, PostalCodeMaster } from '../models/master-data.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MasterDataService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7130/api/masterdata';
+  private readonly baseUrl = `${environment.apiUrl}/masterdata`;
 
   getCountries(): Observable<CountryMaster[]> {
     return this.http.get<CountryMaster[]>(`${this.baseUrl}/countries`);

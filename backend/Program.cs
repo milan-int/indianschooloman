@@ -38,12 +38,11 @@ builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+// Redirect root to swagger
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.UseHttpsRedirection();
 

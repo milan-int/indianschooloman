@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { RegistrationFormService } from '../../services/registration-form.service';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, of, debounceTime, switchMap } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-step1-pupil',
@@ -32,7 +33,7 @@ export class Step1PupilComponent {
       debounceTime(500),
       switchMap(passportNo => {
         if (!passportNo) return of(null);
-        return this.http.get<{exists: boolean}>(`https://localhost:7130/api/Registration/check-passport/${passportNo}`)
+        return this.http.get<{exists: boolean}>(`${environment.apiUrl}/Registration/check-passport/${passportNo}`)
           .pipe(catchError(() => of({exists: false})));
       })
     ).subscribe(result => {
