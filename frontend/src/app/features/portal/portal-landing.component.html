@@ -1,260 +1,580 @@
-<div class="portal-wrapper">
+<div class="portal-root">
   
-  <!-- Main Centered Container Box -->
-  <div class="portal-container">
-    
-    <!-- Header Section -->
-    <header class="portal-header">
-      <div class="header-content">
-        <div class="logo-box">
-          <img src="assets/logo.png" alt="Board of Directors Indian Schools Oman" class="header-logo" />
-        </div>
-      </div>
-    </header>
-
-    <!-- Top Blue Navigation Bar -->
-    <nav class="portal-navbar">
-      <div class="nav-links">
-        <a href="javascript:void(0)" class="nav-item active" (click)="goToLinks()">Admission</a>
-      </div>
-    </nav>
-
-    <!-- Hero Banner Image -->
-    <div class="banner-section" *ngIf="currentView !== 'wizard'">
-      <img src="assets/hero-banner.jpg" alt="Indian Schools Oman Banner" class="banner-img" />
+  <!-- Announcement Ticker Bar -->
+  <div class="top-announcement-bar">
+    <div class="announcement-inner">
+      <span class="live-pill">LIVE NOTICE</span>
+      <span class="announcement-text">
+        Admissions for Academic Year 2026–2027 are officially open for <strong>KG I to Class IX</strong> across all 9 Indian Schools in the Capital Area.
+      </span>
+      <span class="announcement-date">AY 2026–2027</span>
     </div>
-
-    <!-- Wizard View (Full width of container) -->
-    <div *ngIf="currentView === 'wizard'" class="wizard-wrapper">
-      <div class="wizard-top-nav">
-        <button type="button" class="btn-back-guidelines" (click)="currentView = 'guidelines'">
-          ← Back to Guidelines
-        </button>
-      </div>
-      <app-registration-wizard (backToPortal)="goToLinks()"></app-registration-wizard>
-    </div>
-
-    <!-- Main 2-Column Body (Landing / Guidelines) -->
-    <div class="portal-body" *ngIf="currentView !== 'wizard'">
-      
-      <!-- LEFT COLUMN: Content (Links OR Guidelines) -->
-      <div class="left-column">
-        
-        <!-- STATE 1: ADMISSION RELATED LINKS -->
-        <div *ngIf="currentView === 'links'" class="links-box">
-          <h3 class="section-title">Admission Related Link</h3>
-          
-          <div *ngIf="isLoadingLinks" class="loading-box">
-            <span class="spinner"></span> Loading admission links...
-          </div>
-
-          <ul class="admission-links-list" *ngIf="!isLoadingLinks">
-            <li *ngFor="let link of admissionLinks">
-              <a 
-                href="javascript:void(0)" 
-                (click)="handleLinkClick(link)"
-                [class.new-app-link]="link.title.toUpperCase().includes('NEW APPLICATION') || link.linkType === 'INTERNAL_ROUTE'"
-              >
-                {{ link.title }}
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <!-- STATE 2: GUIDELINES FOR ONLINE REGISTRATION -->
-        <div *ngIf="currentView === 'guidelines'" class="guidelines-box">
-          
-          <div class="guidelines-top-bar">
-            <a href="javascript:void(0)" class="link-back" (click)="goToLinks()">← Back to Admission Related Links</a>
-          </div>
-
-          <h2 class="guidelines-heading">GUIDELINES FOR ONLINE REGISTRATION</h2>
-
-          <p class="guidelines-intro">
-            <strong>Online registration for admissions to classes KG I to Class IX is open in Indian Schools in the capital area for the academic year 2026-2027.</strong>
-          </p>
-
-          <!-- Schools Matrix Table -->
-          <div class="table-container">
-            <table class="schools-table">
-              <thead>
-                <tr>
-                  <th style="width: 45px;">SL.N.</th>
-                  <th>SCHOOL</th>
-                  <th style="width: 120px;">SYLLABUS</th>
-                  <th style="width: 140px;">CLASSES</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let s of schools">
-                  <td class="text-center">{{ s.slNo }}</td>
-                  <td>{{ s.name }}</td>
-                  <td class="text-center">{{ s.syllabus }}</td>
-                  <td class="text-center">{{ s.classes }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p class="instructions-prompt">
-            <strong>Please go through the following instructions before filling up the on line registration form:</strong>
-          </p>
-
-          <!-- Numbered Guidelines List -->
-          <ol class="instructions-ordered-list">
-            <li>This online registration form is meant for Indian Nationals seeking new admissions in Indian Schools in the capital area for the academic year 2026-2027.</li>
-            <li>Online registration is mandatory. There is only one application form required for one child; system will not accept any duplication.</li>
-            <li>A unique login registration number and password will be generated on submission of the application form. This will be sent to the email address and mobile number given in the application form.</li>
-            <li>A non-refundable processing fee of OMR 15/- will be payable on each application.</li>
-            <li>Online application form is required even for sibling's admission. To get the sibling preference in the same school, parent should essentially choose the same school as the first option.</li>
-            <li>Tentative vacancies in different schools posted on the site may be checked by parents to know the number of seats available in different classes.</li>
-            <li>The choice of Schools is limited to the availability of seats in the class for which admission is sought.</li>
-            <li>Parents are advised to go through Frequently Asked Questions (FAQs) section for more clarification, if required.</li>
-            <li>
-              Parents seeking inter-school transfers of their wards within Schools in the capital area are required to fill the 'Inter-School Transfer Application form at 
-              <a href="https://forms.gle/P29avN2BoVufqWGz5" target="_blank" class="doc-link">https://forms.gle/P29avN2BoVufqWGz5</a>
-            </li>
-            <li>
-              Parents of other nationalities seeking admissions in Indian Schools in the capital area are required to fill the 'Admission to Other Nationalities form at 
-              <a href="https://forms.gle/hEUAnuLePfyTveD89" target="_blank" class="doc-link">https://forms.gle/hEUAnuLePfyTveD89</a>
-            </li>
-          </ol>
-
-          <!-- Passport Verification and Continue Button -->
-          <div class="passport-check-section">
-            <div class="passport-question-row">
-              <span class="passport-question-text">Does the child have a valid Indian Passport?</span>
-              <label class="radio-label">
-                <input type="radio" name="hasPassport" [value]="true" [(ngModel)]="hasIndianPassport" />
-                Yes
-              </label>
-              <label class="radio-label">
-                <input type="radio" name="hasPassport" [value]="false" [(ngModel)]="hasIndianPassport" />
-                No
-              </label>
-            </div>
-
-            <div *ngIf="!hasIndianPassport" class="passport-warning">
-              ⚠️ Non-Indian passport holders must apply through the <a href="https://forms.gle/hEUAnuLePfyTveD89" target="_blank">Admission to Other Nationalities form</a>.
-            </div>
-
-            <div class="register-action-row">
-              <button 
-                type="button" 
-                class="btn-continue-register" 
-                [disabled]="!hasIndianPassport"
-                (click)="startRegistration()"
-              >
-                Continue to Register
-              </button>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- RIGHT COLUMN: Login Box -->
-      <div class="right-column">
-        <div class="login-panel">
-          <h4 class="login-panel-title">Login</h4>
-          
-          <form (ngSubmit)="onLogin()" class="login-form-inner">
-            
-            <div class="login-row">
-              <label class="login-label" for="username">Username</label>
-              <input 
-                type="text" 
-                id="username" 
-                name="username" 
-                [(ngModel)]="loginUsername" 
-                class="login-input" 
-                required 
-              />
-            </div>
-            <div class="login-hint-text">Parents can use Registration No.</div>
-
-            <div class="login-row" style="margin-top: 8px;">
-              <label class="login-label" for="password">Password</label>
-              <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                [(ngModel)]="loginPassword" 
-                class="login-input" 
-                required 
-              />
-            </div>
-
-            <!-- Captcha Code Row -->
-            <div class="captcha-box-row" style="margin-top: 10px;">
-              <div class="captcha-badge-display" (click)="generateCaptcha()" title="Click to refresh code">
-                {{ captchaCode }}
-              </div>
-              <input 
-                type="text" 
-                name="captcha" 
-                [(ngModel)]="captchaInput" 
-                placeholder="Type code here" 
-                class="captcha-input-field" 
-                required 
-              />
-            </div>
-
-            <div *ngIf="loginErrorMessage" class="login-error-msg">
-              {{ loginErrorMessage }}
-            </div>
-
-            <!-- Login Button -->
-            <div class="login-btn-row">
-              <button type="submit" class="btn-portal-login">
-                <span>Login</span> <span class="arrow-icon">▶</span>
-              </button>
-            </div>
-
-            <div class="forgot-pass-row">
-              <a href="javascript:void(0)" class="forgot-link" (click)="loginErrorMessage = 'Please contact the school office or use your registered mobile number for recovery.'">
-                Forgot password?
-              </a>
-            </div>
-
-          </form>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Footer Links & Copyright -->
-    <footer class="portal-footer">
-      <div class="footer-links-row">
-        <ng-container *ngFor="let fLink of footerLinks; let last = last">
-          <a href="javascript:void(0)" (click)="handleLinkClick(fLink)">{{ fLink.title }}</a>
-          <span class="footer-sep" *ngIf="!last"></span>
-        </ng-container>
-      </div>
-      <div class="footer-copyright-text">
-        (C) Board of Directors Indian Schools, Sultanate of Oman All Rights Reserved.
-      </div>
-    </footer>
-
   </div>
 
-  <!-- PDF Document Preview Modal -->
-  <div *ngIf="isPdfModalOpen" class="doc-modal-overlay" (click)="closePdfModal()">
-    <div class="doc-modal-window" (click)="$event.stopPropagation()">
-      <div class="doc-modal-header">
-        <span class="doc-modal-title">📄 {{ activeDoc?.title }}</span>
-        <div class="doc-modal-btn-group">
-          <button type="button" class="btn-open-tab" (click)="openDocInNewTab()">Open in New Tab</button>
-          <button type="button" class="btn-close-modal" (click)="closePdfModal()">✕</button>
+  <!-- Header Section -->
+  <header class="portal-header">
+    <div class="header-container">
+      <div class="brand-box">
+        <img src="assets/logo.png" alt="Board of Directors Indian Schools, Sultanate of Oman" class="brand-logo" />
+      </div>
+      <div class="header-contact-widgets">
+        <div class="contact-pill">
+          <span class="pill-icon">📞</span>
+          <div class="pill-text">
+            <span class="pill-title">Admission Helpline</span>
+            <span class="pill-val">+968 2470 2567</span>
+          </div>
+        </div>
+        <div class="contact-pill">
+          <span class="pill-icon">🕒</span>
+          <div class="pill-text">
+            <span class="pill-title">Office Hours</span>
+            <span class="pill-val">Sun–Thu (8 AM–2 PM)</span>
+          </div>
         </div>
       </div>
-      <div class="doc-modal-content">
-        <object [data]="safeDocUrl" type="application/pdf" class="pdf-viewer-frame">
-          <div class="pdf-alt-box">
-            <p><strong>{{ activeDoc?.title }}</strong></p>
+    </div>
+  </header>
+
+  <!-- Modern Sticky Nav Bar -->
+  <nav class="portal-navbar">
+    <div class="nav-inner">
+      <div class="nav-tabs">
+        <button class="nav-tab-btn" [class.active]="currentView === 'links'" (click)="goToLinks()">
+          <span class="tab-icon">🏠</span> Admission Portal
+        </button>
+        <button class="nav-tab-btn" [class.active]="currentView === 'guidelines'" (click)="openNewApplication()">
+          <span class="tab-icon">📜</span> Guidelines & Schools
+        </button>
+      </div>
+
+      <div class="nav-right-meta">
+        <span class="system-status-chip">
+          <span class="status-dot"></span> System Online
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Full-width Wizard View if activated -->
+  <div *ngIf="currentView === 'wizard'" class="wizard-fullscreen-container">
+    <div class="wizard-action-header">
+      <button class="btn-return-portal" (click)="currentView = 'guidelines'">
+        <span class="btn-arrow">←</span> Return to Guidelines
+      </button>
+      <div class="wizard-badge-info">
+        <span class="academic-tag">Online Admission Form • AY 2026–2027</span>
+      </div>
+    </div>
+    <app-registration-wizard (backToPortal)="goToLinks()"></app-registration-wizard>
+  </div>
+
+  <!-- Main Portal Layout (Left Hub + Right Auth Card) -->
+  <main *ngIf="currentView !== 'wizard'" class="portal-main-section">
+    <div class="portal-content-container">
+
+      <!-- Hero Banner Card -->
+      <section class="hero-showcase-card">
+        <div class="hero-image-box">
+          <img src="assets/hero-banner.jpg" alt="Indian Schools Oman" class="hero-backdrop-img" />
+          <div class="hero-gradient-overlay">
+            <div class="hero-text-content">
+              <span class="hero-mini-badge">OFFICIAL ADMISSION PORTAL</span>
+              <h1 class="hero-main-title">Indian Schools in the Sultanate of Oman</h1>
+              <p class="hero-subtitle">Centralized Online Admission System for Indian Nationals & Expatriate Communities</p>
+              
+              <div class="hero-stats-row">
+                <div class="stat-bubble">
+                  <strong>9</strong> Capital Area Schools
+                </div>
+                <div class="stat-bubble">
+                  <strong>CBSE & Cambridge</strong> Syllabuses
+                </div>
+                <div class="stat-bubble">
+                  <strong>KG I – IX & XI</strong> Eligible Grades
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2-Column Responsive Dashboard -->
+      <div class="dashboard-grid">
+        
+        <!-- ================= LEFT COLUMN ================= -->
+        <div class="dashboard-main-col">
+
+          <!-- VIEW A: ADMISSION HUB & LINKS -->
+          <div *ngIf="currentView === 'links'" class="view-card-wrapper fade-in">
+            
+            <!-- Highlighted NEW APPLICATION Hero Banner -->
+            <div class="new-app-cta-banner" (click)="openNewApplication()">
+              <div class="cta-banner-left">
+                <div class="cta-sparkle-badge">ADMISSIONS OPEN</div>
+                <h2 class="cta-title">Apply for New Student Admission</h2>
+                <p class="cta-desc">For Classes KG I to Class IX (Academic Year 2026–2027). Read guidelines and complete your 4-step registration online.</p>
+                <div class="cta-features">
+                  <span>✓ 100% Online</span>
+                  <span>✓ Instant Registration No.</span>
+                  <span>✓ Multi-School Preferences</span>
+                </div>
+              </div>
+              <div class="cta-banner-right">
+                <button class="btn-start-app">
+                  <span>Start Application</span>
+                  <span class="arrow-right">→</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Search & Filter Bar for Links -->
+            <div class="section-filter-bar">
+              <div class="filter-header">
+                <h3 class="section-title">Admission Circulars & Downloads</h3>
+                <span class="count-badge">{{ filteredLinks.length }} Resources</span>
+              </div>
+              <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input 
+                  type="text" 
+                  [(ngModel)]="linkSearchQuery" 
+                  placeholder="Search guidelines, transfer rules, FAQs..." 
+                  class="search-field"
+                />
+                <button *ngIf="linkSearchQuery" (click)="linkSearchQuery = ''" class="btn-clear-search">✕</button>
+              </div>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoadingLinks" class="state-loading-box">
+              <div class="pulsing-loader"></div>
+              <span>Connecting to Portal Service & Loading circulars...</span>
+            </div>
+
+            <!-- Dynamic Links Grid -->
+            <div class="resources-grid" *ngIf="!isLoadingLinks">
+              <div 
+                *ngFor="let link of filteredLinks" 
+                class="resource-card"
+                [class.featured-card]="link.linkType === 'INTERNAL_ROUTE' || link.title.toUpperCase().includes('NEW APPLICATION')"
+                (click)="handleLinkClick(link)"
+                role="button"
+                tabindex="0"
+              >
+                <div class="card-icon-col">
+                  <div class="type-icon-badge" [ngClass]="link.linkType">
+                    <span *ngIf="link.linkType === 'PDF_DOCUMENT'">📄</span>
+                    <span *ngIf="link.linkType === 'EXTERNAL_URL'">🌐</span>
+                    <span *ngIf="link.linkType === 'INTERNAL_ROUTE'">✨</span>
+                  </div>
+                </div>
+                <div class="card-body-col">
+                  <div class="card-top-tags">
+                    <span class="tag-type-pill">{{ link.linkType.replace('_', ' ') }}</span>
+                    <span *ngIf="link.openInNewTab" class="tag-ext-pill">EXTERNAL</span>
+                  </div>
+                  <h4 class="resource-title">{{ link.title }}</h4>
+                  <p class="resource-desc">{{ link.description || 'Click to view official document and details.' }}</p>
+                </div>
+                <div class="card-action-col">
+                  <span class="action-btn-circle" title="View details">→</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- VIEW B: ADVANCED GUIDELINES & SCHOOL MATRIX -->
+          <div *ngIf="currentView === 'guidelines'" class="view-card-wrapper fade-in">
+            
+            <div class="guidelines-card-header">
+              <button class="btn-back-link" (click)="goToLinks()">
+                ← Back to Circulars & Portal Home
+              </button>
+              <div class="step-progress-banner">
+                <div class="step-bullet active">1. Guidelines</div>
+                <div class="step-line active"></div>
+                <div class="step-bullet active">2. Eligibility Check</div>
+                <div class="step-line"></div>
+                <div class="step-bullet">3. Application Wizard</div>
+              </div>
+            </div>
+
+            <!-- Prominent Notice Banner -->
+            <div class="guidelines-hero-alert">
+              <div class="alert-icon-wrap">📢</div>
+              <div class="alert-content-wrap">
+                <h3 class="alert-heading">Guidelines for Online Registration (Academic Year 2026–2027)</h3>
+                <p>Online registration for admissions to classes <strong>KG I to Class IX</strong> is open in Indian Schools in the capital area. Please carefully review the syllabus breakdown and instructions below before proceeding.</p>
+              </div>
+            </div>
+
+            <!-- Filterable School Matrix -->
+            <div class="school-matrix-container">
+              <div class="matrix-top-bar">
+                <div class="matrix-title-group">
+                  <h4 class="matrix-title">Capital Area Indian Schools & Curriculum</h4>
+                  <span class="matrix-subtitle">Select syllabus to filter school choices</span>
+                </div>
+                <div class="syllabus-tabs">
+                  <button class="s-tab-btn" [class.active]="schoolFilter === 'ALL'" (click)="schoolFilter = 'ALL'">All (9)</button>
+                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CBSE'" (click)="schoolFilter = 'CBSE'">CBSE (7)</button>
+                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CAMBRIDGE'" (click)="schoolFilter = 'CAMBRIDGE'">Cambridge (2)</button>
+                </div>
+              </div>
+
+              <div class="matrix-table-card">
+                <table class="advanced-schools-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;">#</th>
+                      <th>School Name & Location</th>
+                      <th style="width: 130px;">Curriculum</th>
+                      <th style="width: 160px;">Eligible Classes</th>
+                      <th style="width: 90px;">Website</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let s of filteredSchools">
+                      <td class="num-col font-bold">{{ s.slNo }}</td>
+                      <td>
+                        <div class="school-name-cell">
+                          <span class="s-name">{{ s.name }}</span>
+                          <span class="s-loc">📍 {{ s.location }} • Code: {{ s.code }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="curriculum-badge" [class.cambridge-badge]="s.syllabus === 'CAMBRIDGE'">
+                          {{ s.syllabus }}
+                        </span>
+                      </td>
+                      <td class="classes-cell">{{ s.classes }}</td>
+                      <td>
+                        <a [href]="s.website" target="_blank" class="s-link-btn" title="Visit School Website">Visit ↗</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Numbered Instructions Accordion/List -->
+            <div class="instructions-card-section">
+              <h4 class="section-subheading">Important Instructions for Parents & Applicants</h4>
+              <div class="instruction-cards-list">
+                <div *ngFor="let item of guidelines" class="instruction-item-card">
+                  <div class="inst-num-badge">{{ item.id }}</div>
+                  <div class="inst-content">
+                    <strong class="inst-title">{{ item.title }}:</strong>
+                    <span class="inst-text">{{ item.detail }}</span>
+                    <span *ngIf="item.link" class="inst-link-block">
+                      <a [href]="item.link" target="_blank" class="external-guideline-link">{{ item.linkText }} ↗</a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Eligibility Verification Card -->
+            <div class="eligibility-action-card">
+              <div class="eligibility-header">
+                <span class="shield-icon">🛡️</span>
+                <div>
+                  <h4 class="eligibility-title">Passport Verification & Confirmation</h4>
+                  <p class="eligibility-subtitle">Confirm student eligibility to unlock registration</p>
+                </div>
+              </div>
+
+              <div class="passport-toggle-box">
+                <span class="passport-q-text">Does the applicant child possess a valid Indian Passport?</span>
+                <div class="modern-radio-switch">
+                  <button 
+                    type="button" 
+                    class="radio-btn" 
+                    [class.active]="hasIndianPassport === true" 
+                    (click)="hasIndianPassport = true"
+                  >
+                    ✓ Yes, Indian Passport
+                  </button>
+                  <button 
+                    type="button" 
+                    class="radio-btn danger" 
+                    [class.active]="hasIndianPassport === false" 
+                    (click)="hasIndianPassport = false"
+                  >
+                    ✕ No (Other Nationality)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Warning for non-Indian passport -->
+              <div *ngIf="!hasIndianPassport" class="non-indian-alert">
+                <span class="alert-icon">⚠️</span>
+                <div class="alert-msg">
+                  <strong>Non-Indian Passport Holder:</strong> Admissions for other nationalities are processed via the external quota system. Please fill the 
+                  <a href="https://forms.gle/hEUAnuLePfyTveD89" target="_blank" class="alert-link">Admission to Other Nationalities Application Form ↗</a>.
+                </div>
+              </div>
+
+              <!-- Guidelines acknowledgement checkbox -->
+              <label class="terms-confirm-label">
+                <input type="checkbox" [(ngModel)]="hasConfirmedGuidelines" />
+                <span>I have read, understood, and agree to all the guidelines and eligibility criteria specified above.</span>
+              </label>
+
+              <!-- Final Launch Button -->
+              <div class="launch-action-bar">
+                <button 
+                  type="button" 
+                  class="btn-launch-registration"
+                  [disabled]="!hasIndianPassport || !hasConfirmedGuidelines"
+                  (click)="startRegistration()"
+                >
+                  <span>Continue to Online Registration Wizard</span>
+                  <span class="launch-arrow">➔</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ================= RIGHT COLUMN (LOGIN / TRACKER) ================= -->
+        <div class="dashboard-side-col">
+          
+          <!-- Unified Auth Card with Tabs -->
+          <div class="auth-unified-card">
+            
+            <!-- Auth Card Tabs -->
+            <div class="auth-tabs-header">
+              <button 
+                class="auth-tab" 
+                [class.active]="activeAuthTab === 'login'" 
+                (click)="activeAuthTab = 'login'"
+              >
+                🔐 Applicant Login
+              </button>
+              <button 
+                class="auth-tab" 
+                [class.active]="activeAuthTab === 'track'" 
+                (click)="activeAuthTab = 'track'"
+              >
+                🔍 Track Status
+              </button>
+            </div>
+
+            <!-- TAB 1: LOGIN -->
+            <div *ngIf="activeAuthTab === 'login'" class="auth-tab-body fade-in">
+              <p class="auth-prompt-text">Access your submitted application & documents</p>
+
+              <form (ngSubmit)="onLogin()" class="auth-form">
+                
+                <div class="form-field-group">
+                  <label for="username">Registration No. / Username</label>
+                  <div class="input-with-icon">
+                    <span class="field-icon">👤</span>
+                    <input 
+                      type="text" 
+                      id="username" 
+                      name="username" 
+                      [(ngModel)]="loginUsername" 
+                      placeholder="e.g. 2026-IS-00891" 
+                      required 
+                    />
+                  </div>
+                  <small class="field-help">Parents can use their generated Registration No.</small>
+                </div>
+
+                <div class="form-field-group">
+                  <div class="label-with-action">
+                    <label for="password">Password</label>
+                    <a href="javascript:void(0)" (click)="showPassword = !showPassword" class="toggle-pass">
+                      {{ showPassword ? 'Hide' : 'Show' }}
+                    </a>
+                  </div>
+                  <div class="input-with-icon">
+                    <span class="field-icon">🔒</span>
+                    <input 
+                      [type]="showPassword ? 'text' : 'password'" 
+                      id="password" 
+                      name="password" 
+                      [(ngModel)]="loginPassword" 
+                      placeholder="Enter account password" 
+                      required 
+                    />
+                  </div>
+                </div>
+
+                <!-- Dynamic Security Captcha -->
+                <div class="form-field-group">
+                  <label>Security Code</label>
+                  <div class="captcha-styled-row">
+                    <div class="captcha-art-box" (click)="generateCaptcha()" title="Click to regenerate new captcha">
+                      <span class="captcha-digits">{{ captchaCode }}</span>
+                      <span class="captcha-refresh-btn" title="Refresh code">🔄</span>
+                    </div>
+                    <input 
+                      type="text" 
+                      name="captcha" 
+                      [(ngModel)]="captchaInput" 
+                      placeholder="Enter code" 
+                      class="captcha-entry-input" 
+                      maxlength="6"
+                      required 
+                    />
+                  </div>
+                </div>
+
+                <!-- Messages -->
+                <div *ngIf="loginErrorMessage" class="auth-error-alert">
+                  {{ loginErrorMessage }}
+                </div>
+                <div *ngIf="loginSuccessMessage" class="auth-success-alert">
+                  {{ loginSuccessMessage }}
+                </div>
+
+                <button type="submit" class="btn-auth-submit">
+                  <span>Sign In</span>
+                  <span class="btn-glow-arrow">▶</span>
+                </button>
+
+                <div class="auth-footer-links">
+                  <a href="javascript:void(0)" (click)="loginErrorMessage = 'Please contact the school admission office with your child\'s passport number for password recovery.'" class="forgot-pass-btn">
+                    Forgot your password?
+                  </a>
+                </div>
+              </form>
+            </div>
+
+            <!-- TAB 2: TRACK APPLICATION -->
+            <div *ngIf="activeAuthTab === 'track'" class="auth-tab-body fade-in">
+              <p class="auth-prompt-text">Check your admission processing status</p>
+              
+              <form (ngSubmit)="onTrackStatus()" class="auth-form">
+                <div class="form-field-group">
+                  <label for="trackReg">Registration Reference No.</label>
+                  <div class="input-with-icon">
+                    <span class="field-icon">📄</span>
+                    <input 
+                      type="text" 
+                      id="trackReg" 
+                      name="trackReg" 
+                      [(ngModel)]="trackRegNo" 
+                      placeholder="e.g. 2026-IS-00891" 
+                      required 
+                    />
+                  </div>
+                </div>
+
+                <div class="form-field-group">
+                  <label for="trackMob">Registered Mobile No.</label>
+                  <div class="input-with-icon">
+                    <span class="field-icon">📱</span>
+                    <input 
+                      type="text" 
+                      id="trackMob" 
+                      name="trackMob" 
+                      [(ngModel)]="trackMobile" 
+                      placeholder="e.g. 96891234567" 
+                      required 
+                    />
+                  </div>
+                </div>
+
+                <div *ngIf="trackStatusResult" class="track-result-box">
+                  {{ trackStatusResult }}
+                </div>
+
+                <button type="submit" class="btn-auth-submit">
+                  <span>Check Status</span>
+                  <span class="btn-glow-arrow">🔍</span>
+                </button>
+              </form>
+            </div>
+
+          </div>
+
+          <!-- Quick Helpline & Assistance Widget -->
+          <div class="support-card-widget">
+            <div class="support-header">
+              <span class="support-icon">💡</span>
+              <h4>Admission Helpdesk</h4>
+            </div>
+            <p class="support-desc">For technical queries regarding online registration, portal access, or syllabus questions:</p>
+            <div class="support-contacts">
+              <div class="contact-entry">
+                <span class="c-label">Phone:</span>
+                <span class="c-val">+968 2470 2567 / 2479 9700</span>
+              </div>
+              <div class="contact-entry">
+                <span class="c-label">Email:</span>
+                <span class="c-val">admissions&#64;indianschoolsoman.com</span>
+              </div>
+              <div class="contact-entry">
+                <span class="c-label">Hours:</span>
+                <span class="c-val">Sunday to Thursday (8:00 AM – 2:00 PM)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Multi-Section Footer -->
+  <footer class="portal-footer-section">
+    <div class="footer-inner">
+      <div class="footer-nav-links">
+        <ng-container *ngFor="let fLink of footerLinks; let last = last">
+          <a href="javascript:void(0)" (click)="handleLinkClick(fLink)">{{ fLink.title }}</a>
+          <span class="footer-bullet" *ngIf="!last">•</span>
+        </ng-container>
+      </div>
+      <div class="footer-legal-bar">
+        <span>© Board of Directors Indian Schools, Sultanate of Oman. All Rights Reserved.</span>
+        <span class="portal-ver">Admission Management System v3.2</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Advanced PDF & Document Viewer Modal -->
+  <div *ngIf="isPdfModalOpen" class="pdf-viewer-backdrop fade-in" (click)="closePdfModal()">
+    <div class="pdf-viewer-container" (click)="$event.stopPropagation()">
+      <div class="pdf-viewer-header">
+        <div class="pdf-header-title">
+          <span class="doc-icon-badge">📄</span>
+          <div>
+            <h3>{{ activeDoc?.title }}</h3>
+            <span class="doc-subtitle">{{ activeDoc?.description || 'Official Board Circular' }}</span>
+          </div>
+        </div>
+        <div class="pdf-header-controls">
+          <button class="btn-ctrl-action" (click)="openDocInNewTab()" title="Open document in new tab">
+            ↗ Full Screen / New Tab
+          </button>
+          <button class="btn-ctrl-close" (click)="closePdfModal()" title="Close viewer">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="pdf-viewer-body">
+        <object [data]="safeDocUrl" type="application/pdf" class="pdf-embedded-frame">
+          <div class="pdf-fallback-card">
+            <div class="fallback-icon">📑</div>
+            <h4>{{ activeDoc?.title }}</h4>
             <p>{{ activeDoc?.description }}</p>
-            <a [href]="activeDoc?.targetUrl" target="_blank" class="btn-download">Download Document</a>
+            <div class="fallback-btn-row">
+              <a [href]="activeDoc?.targetUrl" target="_blank" class="btn-download-doc">
+                📥 Download Document (PDF)
+              </a>
+              <button class="btn-dismiss" (click)="closePdfModal()">Close</button>
+            </div>
           </div>
         </object>
       </div>
