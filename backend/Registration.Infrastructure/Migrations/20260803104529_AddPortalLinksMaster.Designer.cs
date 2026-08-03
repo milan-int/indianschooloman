@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Registration.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Registration.Infrastructure.Data;
 namespace Registration.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260803104529_AddPortalLinksMaster")]
+    partial class AddPortalLinksMaster
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -740,13 +743,13 @@ namespace Registration.Infrastructure.Migrations
                         {
                             Id = 3,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Directory & links of all Indian Schools in Oman",
+                            Description = "Direct portals to all capital area Indian schools",
                             DisplayOrder = 3,
                             IsActive = true,
-                            LinkType = "PDF_DOCUMENT",
-                            OpenInNewTab = false,
+                            LinkType = "EXTERNAL_URL",
+                            OpenInNewTab = true,
                             Section = "ADMISSION_LINK",
-                            TargetUrl = "assets/docs/indian_schools_websites.pdf",
+                            TargetUrl = "https://indianschoolsoman.com",
                             Title = "Indian Schools Websites"
                         },
                         new
@@ -824,7 +827,7 @@ namespace Registration.Infrastructure.Migrations
                             LinkType = "PDF_DOCUMENT",
                             OpenInNewTab = false,
                             Section = "FOOTER_LINK",
-                            TargetUrl = "assets/docs/annexure_a.pdf",
+                            TargetUrl = "assets/docs/product_description.pdf",
                             Title = "Product Description"
                         },
                         new
@@ -837,7 +840,7 @@ namespace Registration.Infrastructure.Migrations
                             LinkType = "PDF_DOCUMENT",
                             OpenInNewTab = false,
                             Section = "FOOTER_LINK",
-                            TargetUrl = "assets/docs/notice_to_parents.pdf",
+                            TargetUrl = "assets/docs/privacy_policy.pdf",
                             Title = "Privacy Policy"
                         },
                         new
@@ -850,7 +853,7 @@ namespace Registration.Infrastructure.Migrations
                             LinkType = "PDF_DOCUMENT",
                             OpenInNewTab = false,
                             Section = "FOOTER_LINK",
-                            TargetUrl = "assets/docs/annexure_a.pdf",
+                            TargetUrl = "assets/docs/delivery_policy.pdf",
                             Title = "Delivery Policy"
                         },
                         new
@@ -863,7 +866,7 @@ namespace Registration.Infrastructure.Migrations
                             LinkType = "PDF_DOCUMENT",
                             OpenInNewTab = false,
                             Section = "FOOTER_LINK",
-                            TargetUrl = "assets/docs/indian_schools_websites.pdf",
+                            TargetUrl = "assets/docs/contact_us.pdf",
                             Title = "ContactUS"
                         });
                 });

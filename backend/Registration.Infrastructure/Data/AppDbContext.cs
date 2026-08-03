@@ -25,6 +25,7 @@ namespace Registration.Infrastructure.Data
         public DbSet<SiblingSchoolMaster> SiblingSchools { get; set; }
         public DbSet<SiblingClassMaster> SiblingClasses { get; set; }
         public DbSet<GenderMaster> Genders { get; set; }
+        public DbSet<PortalLinkMaster> PortalLinks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -310,6 +311,23 @@ namespace Registration.Infrastructure.Data
                 new SiblingClassMaster { Id = 12, Name = "Std X", DisplayOrder = 12 },
                 new SiblingClassMaster { Id = 13, Name = "Std XI", DisplayOrder = 13 },
                 new SiblingClassMaster { Id = 14, Name = "Std XII", DisplayOrder = 14 }
+            );
+
+            // Seed Portal Links (Admission links and Footer links)
+            var seedDate = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            modelBuilder.Entity<PortalLinkMaster>().HasData(
+                new PortalLinkMaster { Id = 1, Title = "NEW APPLICATION", Section = "ADMISSION_LINK", LinkType = "INTERNAL_ROUTE", TargetUrl = "/register", Description = "Register a new student for Academic Year 2026–2027", DisplayOrder = 1, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 2, Title = "Notice to Parents", Section = "ADMISSION_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/notice_to_parents.pdf", Description = "Important announcements and eligibility criteria", DisplayOrder = 2, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 3, Title = "Indian Schools Websites", Section = "ADMISSION_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/indian_schools_websites.pdf", Description = "Directory & links of all Indian Schools in Oman", DisplayOrder = 3, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 4, Title = "FAQ", Section = "ADMISSION_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/faq.pdf", Description = "Find answers regarding admission procedures", DisplayOrder = 4, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 5, Title = "Languages offered in Schools", Section = "ADMISSION_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/languages_offered.pdf", Description = "Overview of 2nd & 3rd languages available per school", DisplayOrder = 5, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 6, Title = "Inter-School Transfer", Section = "ADMISSION_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/inter_school_transfer.pdf", Description = "Transfer guidelines between Indian schools in Oman", DisplayOrder = 6, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 7, Title = "Admissions to Other Nationalities", Section = "ADMISSION_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/admissions_other_nationalities.pdf", Description = "Registration guidelines for non-Indian passport holders", DisplayOrder = 7, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 8, Title = "Projected Vacancies", Section = "ADMISSION_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/projected_vacancies.pdf", Description = "Check seat availability across all classes & schools", DisplayOrder = 8, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 9, Title = "Product Description", Section = "FOOTER_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/annexure_a.pdf", Description = "Portal product description", DisplayOrder = 1, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 10, Title = "Privacy Policy", Section = "FOOTER_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/notice_to_parents.pdf", Description = "Privacy policy details", DisplayOrder = 2, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 11, Title = "Delivery Policy", Section = "FOOTER_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/annexure_a.pdf", Description = "Delivery terms and policy", DisplayOrder = 3, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate },
+                new PortalLinkMaster { Id = 12, Title = "ContactUS", Section = "FOOTER_LINK", LinkType = "PDF_DOCUMENT", TargetUrl = "assets/docs/indian_schools_websites.pdf", Description = "Contact details and helpdesk information", DisplayOrder = 4, IsActive = true, OpenInNewTab = false, CreatedAt = seedDate }
             );
         }
     }

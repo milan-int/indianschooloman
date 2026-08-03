@@ -1,15 +1,4 @@
 <div class="portal-root">
-  
-  <!-- Announcement Ticker Bar -->
-  <div class="top-announcement-bar">
-    <div class="announcement-inner">
-      <span class="live-pill">LIVE NOTICE</span>
-      <span class="announcement-text">
-        Admissions for Academic Year 2026–2027 are officially open for <strong>KG I to Class IX</strong> across all 9 Indian Schools in the Capital Area.
-      </span>
-      <span class="announcement-date">AY 2026–2027</span>
-    </div>
-  </div>
 
   <!-- Header Section -->
   <header class="portal-header">
@@ -22,14 +11,14 @@
           <span class="pill-icon">📞</span>
           <div class="pill-text">
             <span class="pill-title">Admission Helpline</span>
-            <span class="pill-val">+968 2470 2567</span>
+            <span class="pill-val">{{ contact.helplinePhone }}</span>
           </div>
         </div>
         <div class="contact-pill">
           <span class="pill-icon">🕒</span>
           <div class="pill-text">
             <span class="pill-title">Office Hours</span>
-            <span class="pill-val">Sun–Thu (8 AM–2 PM)</span>
+            <span class="pill-val">{{ contact.officeHours }}</span>
           </div>
         </div>
       </div>
@@ -63,7 +52,7 @@
         <span class="btn-arrow">←</span> Return to Guidelines
       </button>
       <div class="wizard-badge-info">
-        <span class="academic-tag">Online Admission Form • AY 2026–2027</span>
+        <span class="academic-tag">Online Admission Form • AY {{ contact.academicYear }}</span>
       </div>
     </div>
     <app-registration-wizard (backToPortal)="goToLinks()"></app-registration-wizard>
@@ -85,7 +74,7 @@
               
               <div class="hero-stats-row">
                 <div class="stat-bubble">
-                  <strong>9</strong> Capital Area Schools
+                  <strong>{{ schools.length }}</strong> Capital Area Schools
                 </div>
                 <div class="stat-bubble">
                   <strong>CBSE & Cambridge</strong> Syllabuses
@@ -113,7 +102,7 @@
               <div class="cta-banner-left">
                 <div class="cta-sparkle-badge">ADMISSIONS OPEN</div>
                 <h2 class="cta-title">Apply for New Student Admission</h2>
-                <p class="cta-desc">For Classes KG I to Class IX (Academic Year 2026–2027). Read guidelines and complete your 4-step registration online.</p>
+                <p class="cta-desc">For Classes KG I to Class IX (Academic Year {{ contact.academicYear }}). Read guidelines and complete your 4-step registration online.</p>
                 <div class="cta-features">
                   <span>✓ 100% Online</span>
                   <span>✓ Instant Registration No.</span>
@@ -147,13 +136,13 @@
             </div>
 
             <!-- Loading State -->
-            <div *ngIf="isLoadingLinks" class="state-loading-box">
+            <div *ngIf="isLoadingData" class="state-loading-box">
               <div class="pulsing-loader"></div>
               <span>Connecting to Portal Service & Loading circulars...</span>
             </div>
 
             <!-- Dynamic Links Grid -->
-            <div class="resources-grid" *ngIf="!isLoadingLinks">
+            <div class="resources-grid" *ngIf="!isLoadingData">
               <div 
                 *ngFor="let link of filteredLinks" 
                 class="resource-card"
@@ -205,7 +194,7 @@
             <div class="guidelines-hero-alert">
               <div class="alert-icon-wrap">📢</div>
               <div class="alert-content-wrap">
-                <h3 class="alert-heading">Guidelines for Online Registration (Academic Year 2026–2027)</h3>
+                <h3 class="alert-heading">Guidelines for Online Registration (Academic Year {{ contact.academicYear }})</h3>
                 <p>Online registration for admissions to classes <strong>KG I to Class IX</strong> is open in Indian Schools in the capital area. Please carefully review the syllabus breakdown and instructions below before proceeding.</p>
               </div>
             </div>
@@ -218,9 +207,9 @@
                   <span class="matrix-subtitle">Select syllabus to filter school choices</span>
                 </div>
                 <div class="syllabus-tabs">
-                  <button class="s-tab-btn" [class.active]="schoolFilter === 'ALL'" (click)="schoolFilter = 'ALL'">All (9)</button>
-                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CBSE'" (click)="schoolFilter = 'CBSE'">CBSE (7)</button>
-                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CAMBRIDGE'" (click)="schoolFilter = 'CAMBRIDGE'">Cambridge (2)</button>
+                  <button class="s-tab-btn" [class.active]="schoolFilter === 'ALL'" (click)="schoolFilter = 'ALL'">All ({{ schools.length }})</button>
+                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CBSE'" (click)="schoolFilter = 'CBSE'">CBSE</button>
+                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CAMBRIDGE'" (click)="schoolFilter = 'CAMBRIDGE'">Cambridge</button>
                 </div>
               </div>
 
@@ -245,7 +234,7 @@
                         </div>
                       </td>
                       <td>
-                        <span class="curriculum-badge" [class.cambridge-badge]="s.syllabus === 'CAMBRIDGE'">
+                        <span class="curriculum-badge" [class.cambridge-badge]="s.syllabus.toUpperCase() === 'CAMBRIDGE'">
                           {{ s.syllabus }}
                         </span>
                       </td>
@@ -506,15 +495,15 @@
             <div class="support-contacts">
               <div class="contact-entry">
                 <span class="c-label">Phone:</span>
-                <span class="c-val">+968 2470 2567 / 2479 9700</span>
+                <span class="c-val">{{ contact.helplinePhone }}</span>
               </div>
               <div class="contact-entry">
                 <span class="c-label">Email:</span>
-                <span class="c-val">admissions&#64;indianschoolsoman.com</span>
+                <span class="c-val">{{ contact.helplineEmail }}</span>
               </div>
               <div class="contact-entry">
                 <span class="c-label">Hours:</span>
-                <span class="c-val">Sunday to Thursday (8:00 AM – 2:00 PM)</span>
+                <span class="c-val">{{ contact.officeHours }}</span>
               </div>
             </div>
           </div>

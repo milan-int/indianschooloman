@@ -41,52 +41,6 @@
   color: var(--text-body);
 }
 
-/* ================= 1. ANNOUNCEMENT TICKER ================= */
-.top-announcement-bar {
-  background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
-  color: #f8fafc;
-  padding: 6px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 0.82rem;
-}
-
-.announcement-inner {
-  max-width: 1240px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.live-pill {
-  background: #ef4444;
-  color: #ffffff;
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 10px;
-  letter-spacing: 0.5px;
-  animation: pulseGlow 2s infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.announcement-text {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.announcement-date {
-  background: rgba(255, 255, 255, 0.12);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: 600;
-}
 
 /* ================= 2. HEADER ================= */
 .portal-header {

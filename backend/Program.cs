@@ -32,9 +32,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register Repositories
 builder.Services.AddScoped<IMasterDataRepository, MasterDataRepository>();
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IPortalLinkRepository, PortalLinkRepository>();
 
 // Register Application Services
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
+builder.Services.AddScoped<IPortalLinkService, PortalLinkService>();
 
 var app = builder.Build();
 
@@ -44,9 +46,19 @@ app.UseSwaggerUI();
 // Redirect root to swagger
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
+app.UseStaticFiles();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Headers.TryGetValue("Access-Control-Request-Private-Network", out var _))
+    {
+        context.Response.Headers.Add("Access-Control-Allow-Private-Network", "true");
+    }
+    await next();
+});
 
 app.UseAuthorization();
 
