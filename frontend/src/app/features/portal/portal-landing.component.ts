@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RegistrationWizardComponent } from '../registration/registration-wizard/registration-wizard.component';
+import { PortalService } from '../../core/services/portal.service';
+import { PortalLink } from '../../core/models/portal-link.model';
 
 interface SchoolInfo {
   slNo: number;
@@ -18,8 +21,22 @@ interface SchoolInfo {
   styleUrl: './portal-landing.component.css'
 })
 export class PortalLandingComponent implements OnInit {
+  private portalService = inject(PortalService);
+  private sanitizer = inject(DomSanitizer);
+
   currentView: 'links' | 'guidelines' | 'wizard' = 'links';
   
+  // Dynamic Links from Database
+  admissionLinks: PortalLink[] = [];
+  footerLinks: PortalLink[] = [];
+  isLoadingLinks: boolean = true;
+  linksError: string = '';
+
+  // PDF / Document Viewer Modal State
+  isPdfModalOpen: boolean = false;
+  activeDoc: PortalLink | null = null;
+  safeDocUrl: SafeResourceUrl | null = null;
+
   // Passport check for guidelines
   hasIndianPassport: boolean = true;
 
@@ -59,6 +76,87 @@ export class PortalLandingComponent implements OnInit {
 
   ngOnInit() {
     this.generateCaptcha();
+    this.loadPortalLinks();
+  }
+
+  loadPortalLinks() {
+    this.isLoadingLinks = true;
+    this.linksError = '';
+    this.portalService.getLandingData().subscribe({
+      next: (data) => {
+        this.admissionLinks = data.admissionLinks || [];
+        this.footerLinks = data.footerLinks || [];
+        this.isLoadingLinks = false;
+      },
+      error: (err) => {
+        console.error('Failed to load portal links from API, using fallback', err);
+        this.linksError = 'Failed to load live links from server. Showing standard links.';
+        this.isLoadingLinks = false;
+        // Fallback default links if API is offline
+        this.admissionLinks = [
+          { id: 1, title: 'NEW APPLICATION', section: 'ADMISSION_LINK', linkType: 'INTERNAL_ROUTE', targetUrl: '/register', description: 'Register a new student for Academic Year 2026–2027', displayOrder: 1, isActive: true, openInNewTab: false },
+          { id: 2, title: 'Notice to Parents', section: 'ADMISSION_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/notice_to_parents.pdf', description: 'Important announcements and eligibility criteria', displayOrder: 2, isActive: true, openInNewTab: false },
+          { id: 3, title: 'Indian Schools Websites', section: 'ADMISSION_LINK', linkType: 'EXTERNAL_URL', targetUrl: 'https://indianschoolsoman.com', description: 'Direct portals to all capital area Indian schools', displayOrder: 3, isActive: true, openInNewTab: true },
+          { id: 4, title: 'FAQ', section: 'ADMISSION_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/faq.pdf', description: 'Find answers regarding admission procedures', displayOrder: 4, isActive: true, openInNewTab: false },
+          { id: 5, title: 'Languages offered in Schools', section: 'ADMISSION_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/languages_offered.pdf', description: 'Overview of 2nd & 3rd languages available per school', displayOrder: 5, isActive: true, openInNewTab: false },
+          { id: 6, title: 'Inter-School Transfer', section: 'ADMISSION_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/inter_school_transfer.pdf', description: 'Transfer guidelines between Indian schools in Oman', displayOrder: 6, isActive: true, openInNewTab: false },
+          { id: 7, title: 'Admissions to Other Nationalities', section: 'ADMISSION_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/admissions_other_nationalities.pdf', description: 'Registration guidelines for non-Indian passport holders', displayOrder: 7, isActive: true, openInNewTab: false },
+          { id: 8, title: 'Projected Vacancies', section: 'ADMISSION_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/projected_vacancies.pdf', description: 'Check seat availability across all classes & schools', displayOrder: 8, isActive: true, openInNewTab: false }
+        ];
+        this.footerLinks = [
+          { id: 9, title: 'Product Description', section: 'FOOTER_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/product_description.pdf', displayOrder: 1, isActive: true, openInNewTab: false },
+          { id: 10, title: 'Privacy Policy', section: 'FOOTER_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/privacy_policy.pdf', displayOrder: 2, isActive: true, openInNewTab: false },
+          { id: 11, title: 'Delivery Policy', section: 'FOOTER_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/delivery_policy.pdf', displayOrder: 3, isActive: true, openInNewTab: false },
+          { id: 12, title: 'ContactUS', section: 'FOOTER_LINK', linkType: 'PDF_DOCUMENT', targetUrl: 'assets/docs/contact_us.pdf', displayOrder: 4, isActive: true, openInNewTab: false }
+        ];
+      }
+    });
+  }
+
+  handleLinkClick(link: PortalLink) {
+    if (!link.isActive) return;
+
+    if (link.linkType === 'INTERNAL_ROUTE' || link.title.toUpperCase().includes('NEW APPLICATION')) {
+      this.openNewApplication();
+      return;
+    }
+
+    if (link.linkType === 'EXTERNAL_URL' || link.openInNewTab) {
+      window.open(link.targetUrl, '_blank');
+      return;
+    }
+
+    if (link.linkType === 'PDF_DOCUMENT') {
+      this.openPdfModal(link);
+      return;
+    }
+
+    // Default fallback
+    if (link.targetUrl.startsWith('http')) {
+      window.open(link.targetUrl, '_blank');
+    } else {
+      this.openPdfModal(link);
+    }
+  }
+
+  openPdfModal(link: PortalLink) {
+    this.activeDoc = link;
+    this.safeDocUrl = this.sanitizer.bypassSecurityTrustResourceUrl(link.targetUrl);
+    this.isPdfModalOpen = true;
+    document.body.style.overflow = 'hidden'; // prevent background scrolling
+  }
+
+  closePdfModal() {
+    this.isPdfModalOpen = false;
+    this.activeDoc = null;
+    this.safeDocUrl = null;
+    document.body.style.overflow = '';
+  }
+
+  openDocInNewTab() {
+    if (this.activeDoc?.targetUrl) {
+      window.open(this.activeDoc.targetUrl, '_blank');
+    }
   }
 
   generateCaptcha() {
