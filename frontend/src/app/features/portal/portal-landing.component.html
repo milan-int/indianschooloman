@@ -1,0 +1,334 @@
+<div class="portal-root">
+  <!-- Top Branding Header -->
+  <header class="portal-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <img src="assets/logo.png" alt="Board of Directors Indian Schools Oman" class="portal-logo" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav class="portal-nav">
+    <div class="nav-container">
+      <ul class="nav-links">
+        <li [class.active]="currentView !== 'wizard'"><a (click)="goToLinks()">Admission</a></li>
+        <li><a href="javascript:void(0)">Schools Directory</a></li>
+        <li><a href="javascript:void(0)">Academic Calendar</a></li>
+        <li><a href="javascript:void(0)">FAQ & Support</a></li>
+      </ul>
+      <div class="nav-academic-year">
+        <span class="badge-year">Academic Year 2026–2027</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- If in Wizard view, show wizard directly with back button -->
+  <div *ngIf="currentView === 'wizard'" class="wizard-container-wrapper">
+    <div class="wizard-nav-bar">
+      <button class="btn-back-portal" (click)="currentView = 'guidelines'">
+        <span class="arrow">←</span> Back to Guidelines & Eligibility
+      </button>
+      <span class="wizard-title-badge">Online Admission Application</span>
+    </div>
+    <app-registration-wizard (backToPortal)="goToLinks()"></app-registration-wizard>
+  </div>
+
+  <!-- Landing & Guidelines Layout (Two Column) -->
+  <main *ngIf="currentView !== 'wizard'" class="portal-main">
+    <div class="main-container">
+      
+      <!-- Hero Banner Section -->
+      <section class="hero-banner-card">
+        <div class="hero-image-wrapper">
+          <img src="assets/hero-banner.jpg" alt="Indian Schools Oman Students" class="hero-image" />
+          <div class="hero-overlay">
+            <div class="hero-caption">
+              <h2>Welcome to Indian Schools in Oman</h2>
+              <p>Nurturing Excellence, Shaping Tomorrow's Leaders</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Two Column Content Grid -->
+      <div class="portal-grid">
+        
+        <!-- LEFT COLUMN: Dynamic View (Links vs Guidelines) -->
+        <div class="portal-left-col">
+          
+          <!-- STATE A: Admission Related Links -->
+          <div *ngIf="currentView === 'links'" class="content-card animated-fade">
+            <div class="card-header-bar">
+              <h3>
+                <span class="icon">📋</span> Admission Related Links
+              </h3>
+            </div>
+            
+            <div class="links-list">
+              <!-- Highlighted Primary Action -->
+              <a class="link-item primary-highlight" (click)="openNewApplication()">
+                <div class="link-info">
+                  <div class="link-title">
+                    <span class="highlight-spark">✨</span> NEW APPLICATION
+                  </div>
+                  <div class="link-desc">Register a new student for Academic Year 2026–2027</div>
+                </div>
+                <span class="action-pill">Apply Now →</span>
+              </a>
+
+              <a class="link-item" href="javascript:void(0)">
+                <div class="link-info">
+                  <div class="link-title">Notice to Parents</div>
+                  <div class="link-desc">Important announcements and eligibility criteria</div>
+                </div>
+                <span class="chevron">›</span>
+              </a>
+
+              <a class="link-item" href="javascript:void(0)">
+                <div class="link-info">
+                  <div class="link-title">Indian Schools Websites</div>
+                  <div class="link-desc">Direct portals to all capital area Indian schools</div>
+                </div>
+                <span class="chevron">›</span>
+              </a>
+
+              <a class="link-item" href="javascript:void(0)">
+                <div class="link-info">
+                  <div class="link-title">FAQ (Frequently Asked Questions)</div>
+                  <div class="link-desc">Find answers regarding admission procedures</div>
+                </div>
+                <span class="chevron">›</span>
+              </a>
+
+              <a class="link-item" href="javascript:void(0)">
+                <div class="link-info">
+                  <div class="link-title">Languages Offered in Schools</div>
+                  <div class="link-desc">Overview of 2nd & 3rd languages available per school</div>
+                </div>
+                <span class="chevron">›</span>
+              </a>
+
+              <a class="link-item" href="javascript:void(0)">
+                <div class="link-info">
+                  <div class="link-title">Inter-School Transfer</div>
+                  <div class="link-desc">Transfer guidelines between Indian schools in Oman</div>
+                </div>
+                <span class="chevron">›</span>
+              </a>
+
+              <a class="link-item" href="javascript:void(0)">
+                <div class="link-info">
+                  <div class="link-title">Admissions to Other Nationalities</div>
+                  <div class="link-desc">Registration guidelines for non-Indian passport holders</div>
+                </div>
+                <span class="chevron">›</span>
+              </a>
+
+              <a class="link-item" href="javascript:void(0)">
+                <div class="link-info">
+                  <div class="link-title">Projected Vacancies</div>
+                  <div class="link-desc">Check seat availability across all classes & schools</div>
+                </div>
+                <span class="chevron">›</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- STATE B: Guidelines For Online Registration -->
+          <div *ngIf="currentView === 'guidelines'" class="content-card animated-fade guidelines-card">
+            
+            <div class="guidelines-header-bar">
+              <button class="btn-text-back" (click)="goToLinks()">
+                ← Back to Links
+              </button>
+              <h2 class="guidelines-title">GUIDELINES FOR ONLINE REGISTRATION</h2>
+            </div>
+
+            <!-- Open Classes Notice Banner -->
+            <div class="announcement-banner">
+              <div class="banner-icon">📢</div>
+              <div class="banner-text">
+                <strong>Notice:</strong> Online registration for admissions to classes <strong>KG I to Class IX</strong> is open in Indian Schools in the capital area for the academic year <strong>2026–2027</strong>.
+              </div>
+            </div>
+
+            <!-- Schools Table -->
+            <div class="table-responsive">
+              <table class="school-matrix-table">
+                <thead>
+                  <tr>
+                    <th style="width: 60px;">SL.N.</th>
+                    <th>SCHOOL</th>
+                    <th style="width: 140px;">SYLLABUS</th>
+                    <th style="width: 150px;">CLASSES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let s of schools">
+                    <td class="text-center font-bold">{{ s.slNo }}</td>
+                    <td class="school-name">{{ s.name }}</td>
+                    <td>
+                      <span class="badge-syllabus" [class.cambridge]="s.syllabus === 'CAMBRIDGE'">
+                        {{ s.syllabus }}
+                      </span>
+                    </td>
+                    <td class="class-range">{{ s.classes }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Guidelines List -->
+            <div class="guidelines-instructions-box">
+              <h4 class="instructions-heading">Please go through the following instructions before filling up the online registration form:</h4>
+              <ol class="instructions-list">
+                <li *ngFor="let item of guidelines; let i = index">
+                  <span class="item-text">{{ item }}</span>
+                </li>
+              </ol>
+            </div>
+
+            <!-- Verification Action Box -->
+            <div class="verification-action-card">
+              <div class="passport-question">
+                <span class="question-label">Does the child have a valid Indian Passport?</span>
+                <div class="radio-group">
+                  <label class="radio-option" [class.selected]="hasIndianPassport === true">
+                    <input type="radio" name="indianPassport" [value]="true" [(ngModel)]="hasIndianPassport" />
+                    <span class="radio-custom"></span>
+                    <span class="option-text">Yes</span>
+                  </label>
+                  <label class="radio-option" [class.selected]="hasIndianPassport === false">
+                    <input type="radio" name="indianPassport" [value]="false" [(ngModel)]="hasIndianPassport" />
+                    <span class="radio-custom"></span>
+                    <span class="option-text">No</span>
+                  </label>
+                </div>
+              </div>
+
+              <div *ngIf="!hasIndianPassport" class="non-indian-notice">
+                ⚠️ Parents of other nationalities seeking admissions are required to fill the <a href="https://forms.gle/hEUAnuLePfyTveD89" target="_blank" class="external-link">Admission to Other Nationalities form</a>.
+              </div>
+
+              <div class="action-buttons">
+                <button class="btn-continue" [disabled]="!hasIndianPassport" (click)="startRegistration()">
+                  Continue to Register <span class="arrow-right">→</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Login Card -->
+        <div class="portal-right-col">
+          <div class="login-card">
+            <div class="login-card-header">
+              <div class="login-icon-badge">🔐</div>
+              <div class="login-title-group">
+                <h3>Applicant Login</h3>
+                <span class="login-subtext">Access your existing application</span>
+              </div>
+            </div>
+
+            <form (ngSubmit)="onLogin()" class="login-form">
+              
+              <div class="form-group">
+                <label for="username">Registration No. / Username</label>
+                <div class="input-wrapper">
+                  <input 
+                    type="text" 
+                    id="username" 
+                    [(ngModel)]="loginUsername" 
+                    name="username" 
+                    placeholder="Enter Registration No." 
+                    required 
+                  />
+                </div>
+                <small class="field-hint">Parents can use their generated Registration No.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                  <input 
+                    type="password" 
+                    id="password" 
+                    [(ngModel)]="loginPassword" 
+                    name="password" 
+                    placeholder="Enter Password" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <!-- Captcha Section -->
+              <div class="form-group captcha-group">
+                <label>Security Verification</label>
+                <div class="captcha-row">
+                  <div class="captcha-badge" (click)="generateCaptcha()" title="Click to refresh captcha">
+                    <span class="captcha-text">{{ captchaCode }}</span>
+                    <span class="captcha-refresh">🔄</span>
+                  </div>
+                  <input 
+                    type="text" 
+                    [(ngModel)]="captchaInput" 
+                    name="captcha" 
+                    placeholder="Type code here" 
+                    class="captcha-input" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div *ngIf="loginErrorMessage" class="login-error-alert">
+                {{ loginErrorMessage }}
+              </div>
+
+              <button type="submit" class="btn-login">
+                <span>Login</span>
+                <span class="play-icon">▶</span>
+              </button>
+
+              <div class="forgot-password-link">
+                <a href="javascript:void(0)" (click)="loginErrorMessage = 'Please contact school administration or use your registered mobile number for password recovery.'">
+                  Forgot password?
+                </a>
+              </div>
+            </form>
+          </div>
+
+          <!-- Quick Info Widget -->
+          <div class="helpdesk-widget">
+            <h4>💡 Admission Helpline</h4>
+            <p>Need assistance with online registration?</p>
+            <div class="helpline-badge">📞 +968 2470 2567</div>
+            <small>Sun – Thu (8:00 AM to 2:00 PM)</small>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Portal Footer -->
+  <footer class="portal-footer">
+    <div class="footer-container">
+      <div class="footer-links">
+        <a href="javascript:void(0)">Product Description</a>
+        <span class="sep">•</span>
+        <a href="javascript:void(0)">Privacy Policy</a>
+        <span class="sep">•</span>
+        <a href="javascript:void(0)">Delivery Policy</a>
+        <span class="sep">•</span>
+        <a href="javascript:void(0)">Contact Us</a>
+      </div>
+      <div class="footer-copyright">
+        © Board of Directors Indian Schools, Sultanate of Oman. All Rights Reserved.
+      </div>
+    </div>
+  </footer>
+</div>

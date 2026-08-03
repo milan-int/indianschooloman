@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { RegistrationFormService } from '../services/registration-form.service';
@@ -28,6 +28,8 @@ import { PreviewModalComponent } from '../components/preview-modal/preview-modal
   templateUrl: './registration-wizard.component.html'
 })
 export class RegistrationWizardComponent implements OnInit {
+  @Output() backToPortal = new EventEmitter<void>();
+
   formService = inject(RegistrationFormService);
   masterData = inject(MasterDataService);
   registrationService = inject(RegistrationService);
