@@ -1255,47 +1255,13 @@
 }
 
 /* ================= 9. WIZARD WRAPPER ================= */
-.wizard-fullscreen-container {
-  max-width: 1240px;
-  margin: 20px auto;
-  padding: 0 24px;
+.portal-root.wizard-mode {
+  background: transparent;
 }
 
-.wizard-action-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.btn-return-portal {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
-  color: var(--primary-teal);
-  padding: 8px 18px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
-}
-
-.btn-return-portal:hover {
-  background: var(--primary-light);
-  border-color: var(--primary-teal);
-}
-
-.academic-tag {
-  background: var(--primary-teal);
-  color: #ffffff;
-  padding: 6px 16px;
-  border-radius: 16px;
-  font-size: 0.82rem;
-  font-weight: 700;
+.pure-wizard-wrapper {
+  width: 100%;
+  min-height: 100vh;
 }
 
 /* ================= 10. FOOTER ================= */

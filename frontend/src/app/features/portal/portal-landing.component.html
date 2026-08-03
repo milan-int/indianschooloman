@@ -1,7 +1,7 @@
-<div class="portal-root">
+<div class="portal-root" [class.wizard-mode]="currentView === 'wizard'">
 
-  <!-- Header Section -->
-  <header class="portal-header">
+  <!-- Header Section (Only on Portal / Guidelines view) -->
+  <header *ngIf="currentView !== 'wizard'" class="portal-header">
     <div class="header-container">
       <div class="brand-box">
         <img src="assets/logo.png" alt="Board of Directors Indian Schools, Sultanate of Oman" class="brand-logo" />
@@ -25,8 +25,8 @@
     </div>
   </header>
 
-  <!-- Modern Sticky Nav Bar -->
-  <nav class="portal-navbar">
+  <!-- Modern Sticky Nav Bar (Only on Portal / Guidelines view) -->
+  <nav *ngIf="currentView !== 'wizard'" class="portal-navbar">
     <div class="nav-inner">
       <div class="nav-tabs">
         <button class="nav-tab-btn" [class.active]="currentView === 'links'" (click)="goToLinks()">
@@ -45,16 +45,8 @@
     </div>
   </nav>
 
-  <!-- Full-width Wizard View if activated -->
-  <div *ngIf="currentView === 'wizard'" class="wizard-fullscreen-container">
-    <div class="wizard-action-header">
-      <button class="btn-return-portal" (click)="currentView = 'guidelines'">
-        <span class="btn-arrow">←</span> Return to Guidelines
-      </button>
-      <div class="wizard-badge-info">
-        <span class="academic-tag">Online Admission Form • AY {{ contact.academicYear }}</span>
-      </div>
-    </div>
+  <!-- Full-Screen Dedicated Registration Wizard (Original UI) -->
+  <div *ngIf="currentView === 'wizard'" class="pure-wizard-wrapper fade-in">
     <app-registration-wizard (backToPortal)="goToLinks()"></app-registration-wizard>
   </div>
 
@@ -516,7 +508,7 @@
   </main>
 
   <!-- Modern Multi-Section Footer -->
-  <footer class="portal-footer-section">
+  <footer *ngIf="currentView !== 'wizard'" class="portal-footer-section">
     <div class="footer-inner">
       <div class="footer-nav-links">
         <ng-container *ngFor="let fLink of footerLinks; let last = last">

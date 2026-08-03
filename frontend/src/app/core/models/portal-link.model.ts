@@ -7,10 +7,12 @@ export interface PortalLink {
   description?: string;
   displayOrder: number;
   isActive: boolean;
+  isDeleted?: boolean;
   openInNewTab: boolean;
 }
 
 export interface SchoolInfo {
+  id?: number;
   slNo: number;
   name: string;
   code: string;
@@ -18,14 +20,30 @@ export interface SchoolInfo {
   classes: string;
   location: string;
   website: string;
+  displayOrder?: number;
+  isActive?: boolean;
+  isDeleted?: boolean;
 }
 
 export interface GuidelineInstruction {
   id: number;
+  displayOrder?: number;
   title: string;
   detail: string;
   link?: string;
   linkText?: string;
+  isActive?: boolean;
+  isDeleted?: boolean;
+}
+
+export interface PortalConfig {
+  id: number;
+  configKey: string;
+  configValue: string;
+  section: string;
+  description?: string;
+  isActive: boolean;
+  isDeleted?: boolean;
 }
 
 export interface PortalContact {

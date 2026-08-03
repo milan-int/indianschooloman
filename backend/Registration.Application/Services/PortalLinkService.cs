@@ -13,6 +13,7 @@ namespace Registration.Application.Services
             _repository = repository;
         }
 
+        #region Landing Page Data
         public async Task<LandingPageDataDto> GetLandingPageDataAsync()
         {
             var links = await _repository.GetActiveLinksAsync();
@@ -20,21 +21,30 @@ namespace Registration.Application.Services
             var admissionLinks = links
                 .Where(l => l.Section.Equals("ADMISSION_LINK", StringComparison.OrdinalIgnoreCase))
                 .OrderBy(l => l.DisplayOrder)
-                .Select(MapToDto);
+                .Select(MapLinkToDto);
 
             var footerLinks = links
                 .Where(l => l.Section.Equals("FOOTER_LINK", StringComparison.OrdinalIgnoreCase))
                 .OrderBy(l => l.DisplayOrder)
-                .Select(MapToDto);
+                .Select(MapLinkToDto);
 
-            var schools = GetSchoolMatrixData();
-            var guidelines = GetGuidelinesData();
+            var schools = (await _repository.GetActiveSchoolsAsync())
+                .OrderBy(s => s.DisplayOrder)
+                .ThenBy(s => s.SlNo)
+                .Select(MapSchoolToDto);
+
+            var guidelines = (await _repository.GetActiveGuidelinesAsync())
+                .OrderBy(g => g.DisplayOrder)
+                .Select(MapGuidelineToDto);
+
+            var configs = (await _repository.GetActiveConfigsAsync()).ToList();
+
             var contact = new PortalContactDto
             {
-                HelplinePhone = "+968 2470 2567 / 2479 9700",
-                HelplineEmail = "admissions@indianschoolsoman.com",
-                OfficeHours = "Sunday to Thursday (8:00 AM – 2:00 PM)",
-                AcademicYear = "2026–2027"
+                HelplinePhone = configs.FirstOrDefault(c => c.ConfigKey.Equals("HelplinePhone", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "+968 2470 2567 / 2479 9700",
+                HelplineEmail = configs.FirstOrDefault(c => c.ConfigKey.Equals("HelplineEmail", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "admissions@indianschoolsoman.com",
+                OfficeHours = configs.FirstOrDefault(c => c.ConfigKey.Equals("OfficeHours", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "Sunday to Thursday (8:00 AM – 2:00 PM)",
+                AcademicYear = configs.FirstOrDefault(c => c.ConfigKey.Equals("AcademicYear", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "2026–2027"
             };
 
             return new LandingPageDataDto
@@ -46,17 +56,19 @@ namespace Registration.Application.Services
                 Contact = contact
             };
         }
+        #endregion
 
-        public async Task<IEnumerable<PortalLinkDto>> GetAllLinksAsync()
+        #region Portal Links
+        public async Task<IEnumerable<PortalLinkDto>> GetAllLinksAsync(bool includeDeleted = false)
         {
-            var links = await _repository.GetAllLinksAsync();
-            return links.Select(MapToDto);
+            var links = await _repository.GetAllLinksAsync(includeDeleted);
+            return links.Select(MapLinkToDto);
         }
 
         public async Task<PortalLinkDto?> GetByIdAsync(int id)
         {
             var link = await _repository.GetByIdAsync(id);
-            return link == null ? null : MapToDto(link);
+            return link == null ? null : MapLinkToDto(link);
         }
 
         public async Task<PortalLinkDto> CreateLinkAsync(CreatePortalLinkDto dto)
@@ -70,11 +82,12 @@ namespace Registration.Application.Services
                 Description = dto.Description?.Trim(),
                 DisplayOrder = dto.DisplayOrder,
                 IsActive = dto.IsActive,
+                IsDeleted = false,
                 OpenInNewTab = dto.OpenInNewTab
             };
 
             var created = await _repository.AddAsync(entity);
-            return MapToDto(created);
+            return MapLinkToDto(created);
         }
 
         public async Task<PortalLinkDto?> UpdateLinkAsync(int id, UpdatePortalLinkDto dto)
@@ -92,7 +105,7 @@ namespace Registration.Application.Services
             existing.OpenInNewTab = dto.OpenInNewTab;
 
             var updated = await _repository.UpdateAsync(existing);
-            return MapToDto(updated);
+            return MapLinkToDto(updated);
         }
 
         public async Task<bool> ToggleStatusAsync(int id, bool isActive)
@@ -107,43 +120,172 @@ namespace Registration.Application.Services
 
         public async Task<bool> DeleteLinkAsync(int id)
         {
-            return await _repository.DeleteAsync(id);
+            return await _repository.SoftDeleteAsync(id);
         }
+        #endregion
 
-        private static List<SchoolMatrixDto> GetSchoolMatrixData()
+        #region Schools Matrix
+        public async Task<IEnumerable<PortalSchoolDto>> GetAllSchoolsAsync(bool includeDeleted = false)
         {
-            return new List<SchoolMatrixDto>
-            {
-                new SchoolMatrixDto { SlNo = 1, Name = "Indian School Muscat", Code = "ISM", Syllabus = "CBSE", Classes = "KG I – IX & XI", Location = "Darsait / Muscat", Website = "https://ismoman.com" },
-                new SchoolMatrixDto { SlNo = 2, Name = "Indian School Darsait", Code = "ISD", Syllabus = "CBSE", Classes = "KG I – IX & XI", Location = "Darsait", Website = "https://isdoman.com" },
-                new SchoolMatrixDto { SlNo = 3, Name = "Indian School Al Wadi Al Kabir", Code = "ISWK", Syllabus = "CBSE", Classes = "KG I – IX & XI", Location = "Wadi Kabir", Website = "https://iswkoman.com" },
-                new SchoolMatrixDto { SlNo = 4, Name = "Indian School Al Wadi Al Kabir International", Code = "ISWKi", Syllabus = "CAMBRIDGE", Classes = "KG I – IX & XI", Location = "Wadi Kabir", Website = "https://iswkoman.com" },
-                new SchoolMatrixDto { SlNo = 5, Name = "Indian School Al Ghubra", Code = "ISG", Syllabus = "CBSE", Classes = "KG I – IX & XI", Location = "Al Ghubra", Website = "https://isgoman.com" },
-                new SchoolMatrixDto { SlNo = 6, Name = "Indian School Al Ghubra International", Code = "ISGi", Syllabus = "CAMBRIDGE", Classes = "KG I – IX & XI", Location = "Al Ghubra", Website = "https://isgoman.com" },
-                new SchoolMatrixDto { SlNo = 7, Name = "Indian School Bousher", Code = "ISB", Syllabus = "CBSE", Classes = "KG I – IX & XI", Location = "Bousher", Website = "https://isboman.com" },
-                new SchoolMatrixDto { SlNo = 8, Name = "Indian School Seeb", Code = "ISAS", Syllabus = "CBSE", Classes = "KG I – IX & XI", Location = "Al Seeb", Website = "https://isseeoman.com" },
-                new SchoolMatrixDto { SlNo = 9, Name = "Indian School Maabela", Code = "ISAM", Syllabus = "CBSE", Classes = "KG I – IX & XI", Location = "Al Maabela", Website = "https://isamoman.com" }
-            };
+            var schools = await _repository.GetAllSchoolsAsync(includeDeleted);
+            return schools.Select(MapSchoolToDto);
         }
 
-        private static List<GuidelineInstructionDto> GetGuidelinesData()
+        public async Task<PortalSchoolDto?> GetSchoolByIdAsync(int id)
         {
-            return new List<GuidelineInstructionDto>
-            {
-                new GuidelineInstructionDto { Id = 1, Title = "Eligibility", Detail = "This online registration form is meant for Indian Nationals seeking new admissions in Indian Schools in the capital area for the academic year 2026-2027." },
-                new GuidelineInstructionDto { Id = 2, Title = "Single Mandatory Application", Detail = "Online registration is mandatory. There is only one application form required for one child; our system will not accept duplicate passport entries." },
-                new GuidelineInstructionDto { Id = 3, Title = "Credentials & Notifications", Detail = "A unique login registration number and password will be generated automatically upon submission and sent to your registered email and mobile number." },
-                new GuidelineInstructionDto { Id = 4, Title = "Application Processing Fee", Detail = "A non-refundable processing fee of OMR 15/- is payable upon successful submission of the application form." },
-                new GuidelineInstructionDto { Id = 5, Title = "Sibling Preference Rule", Detail = "Online application is mandatory even for sibling admissions. To claim sibling preference, the parent must select the sibling's school as their First Preference." },
-                new GuidelineInstructionDto { Id = 6, Title = "Seat Vacancies", Detail = "Tentative vacancies across different schools are dynamically updated on the portal for parents to review before submitting preferences." },
-                new GuidelineInstructionDto { Id = 7, Title = "Admission Allotment", Detail = "School allotment is strictly subject to vacancy availability and merit criteria set by the Board of Directors." },
-                new GuidelineInstructionDto { Id = 8, Title = "Help & Queries", Detail = "Parents are strongly advised to check the Frequently Asked Questions (FAQs) section for guidance on common registration questions." },
-                new GuidelineInstructionDto { Id = 9, Title = "Inter-School Transfer", Detail = "Parents seeking inter-school transfer for their wards must complete the dedicated transfer portal:", Link = "https://forms.gle/P29avN2BoVufqWGz5", LinkText = "Inter-School Transfer Form" },
-                new GuidelineInstructionDto { Id = 10, Title = "Other Nationalities", Detail = "Parents of non-Indian nationalities seeking admission in Indian schools must apply through the external foreign quota portal:", Link = "https://forms.gle/hEUAnuLePfyTveD89", LinkText = "Other Nationalities Form" }
-            };
+            var school = await _repository.GetSchoolByIdAsync(id);
+            return school == null ? null : MapSchoolToDto(school);
         }
 
-        private static PortalLinkDto MapToDto(PortalLinkMaster entity)
+        public async Task<PortalSchoolDto> CreateSchoolAsync(CreateSchoolDto dto)
+        {
+            var entity = new PortalSchoolMaster
+            {
+                SlNo = dto.SlNo,
+                Name = dto.Name.Trim(),
+                Code = dto.Code.Trim().ToUpperInvariant(),
+                Syllabus = dto.Syllabus.Trim().ToUpperInvariant(),
+                Classes = dto.Classes.Trim(),
+                Location = dto.Location.Trim(),
+                Website = dto.Website.Trim(),
+                DisplayOrder = dto.DisplayOrder,
+                IsActive = dto.IsActive,
+                IsDeleted = false
+            };
+
+            var created = await _repository.AddSchoolAsync(entity);
+            return MapSchoolToDto(created);
+        }
+
+        public async Task<PortalSchoolDto?> UpdateSchoolAsync(int id, UpdateSchoolDto dto)
+        {
+            var existing = await _repository.GetSchoolByIdAsync(id);
+            if (existing == null) return null;
+
+            existing.SlNo = dto.SlNo;
+            existing.Name = dto.Name.Trim();
+            existing.Code = dto.Code.Trim().ToUpperInvariant();
+            existing.Syllabus = dto.Syllabus.Trim().ToUpperInvariant();
+            existing.Classes = dto.Classes.Trim();
+            existing.Location = dto.Location.Trim();
+            existing.Website = dto.Website.Trim();
+            existing.DisplayOrder = dto.DisplayOrder;
+            existing.IsActive = dto.IsActive;
+
+            var updated = await _repository.UpdateSchoolAsync(existing);
+            return MapSchoolToDto(updated);
+        }
+
+        public async Task<bool> ToggleSchoolStatusAsync(int id, bool isActive)
+        {
+            var existing = await _repository.GetSchoolByIdAsync(id);
+            if (existing == null) return false;
+
+            existing.IsActive = isActive;
+            await _repository.UpdateSchoolAsync(existing);
+            return true;
+        }
+
+        public async Task<bool> DeleteSchoolAsync(int id)
+        {
+            return await _repository.SoftDeleteSchoolAsync(id);
+        }
+        #endregion
+
+        #region Guidelines
+        public async Task<IEnumerable<PortalGuidelineDto>> GetAllGuidelinesAsync(bool includeDeleted = false)
+        {
+            var guidelines = await _repository.GetAllGuidelinesAsync(includeDeleted);
+            return guidelines.Select(MapGuidelineToDto);
+        }
+
+        public async Task<PortalGuidelineDto?> GetGuidelineByIdAsync(int id)
+        {
+            var guideline = await _repository.GetGuidelineByIdAsync(id);
+            return guideline == null ? null : MapGuidelineToDto(guideline);
+        }
+
+        public async Task<PortalGuidelineDto> CreateGuidelineAsync(CreateGuidelineDto dto)
+        {
+            var entity = new PortalGuidelineMaster
+            {
+                DisplayOrder = dto.DisplayOrder,
+                Title = dto.Title.Trim(),
+                Detail = dto.Detail.Trim(),
+                Link = dto.Link?.Trim(),
+                LinkText = dto.LinkText?.Trim(),
+                IsActive = dto.IsActive,
+                IsDeleted = false
+            };
+
+            var created = await _repository.AddGuidelineAsync(entity);
+            return MapGuidelineToDto(created);
+        }
+
+        public async Task<PortalGuidelineDto?> UpdateGuidelineAsync(int id, UpdateGuidelineDto dto)
+        {
+            var existing = await _repository.GetGuidelineByIdAsync(id);
+            if (existing == null) return null;
+
+            existing.DisplayOrder = dto.DisplayOrder;
+            existing.Title = dto.Title.Trim();
+            existing.Detail = dto.Detail.Trim();
+            existing.Link = dto.Link?.Trim();
+            existing.LinkText = dto.LinkText?.Trim();
+            existing.IsActive = dto.IsActive;
+
+            var updated = await _repository.UpdateGuidelineAsync(existing);
+            return MapGuidelineToDto(updated);
+        }
+
+        public async Task<bool> ToggleGuidelineStatusAsync(int id, bool isActive)
+        {
+            var existing = await _repository.GetGuidelineByIdAsync(id);
+            if (existing == null) return false;
+
+            existing.IsActive = isActive;
+            await _repository.UpdateGuidelineAsync(existing);
+            return true;
+        }
+
+        public async Task<bool> DeleteGuidelineAsync(int id)
+        {
+            return await _repository.SoftDeleteGuidelineAsync(id);
+        }
+        #endregion
+
+        #region Configs
+        public async Task<IEnumerable<PortalConfigDto>> GetAllConfigsAsync()
+        {
+            var configs = await _repository.GetAllConfigsAsync();
+            return configs.Select(MapConfigToDto);
+        }
+
+        public async Task<PortalConfigDto?> GetConfigByKeyAsync(string key)
+        {
+            var config = await _repository.GetConfigByKeyAsync(key);
+            return config == null ? null : MapConfigToDto(config);
+        }
+
+        public async Task<PortalConfigDto?> UpdateConfigAsync(string key, UpdateConfigDto dto)
+        {
+            var config = await _repository.GetConfigByKeyAsync(key);
+            if (config == null) return null;
+
+            config.ConfigValue = dto.ConfigValue.Trim();
+            if (!string.IsNullOrWhiteSpace(dto.Description))
+            {
+                config.Description = dto.Description.Trim();
+            }
+            config.IsActive = dto.IsActive;
+
+            var updated = await _repository.UpdateConfigAsync(config);
+            return MapConfigToDto(updated);
+        }
+        #endregion
+
+        #region Mappers
+        private static PortalLinkDto MapLinkToDto(PortalLinkMaster entity)
         {
             return new PortalLinkDto
             {
@@ -155,8 +297,57 @@ namespace Registration.Application.Services
                 Description = entity.Description,
                 DisplayOrder = entity.DisplayOrder,
                 IsActive = entity.IsActive,
+                IsDeleted = entity.IsDeleted,
                 OpenInNewTab = entity.OpenInNewTab
             };
         }
+
+        private static PortalSchoolDto MapSchoolToDto(PortalSchoolMaster entity)
+        {
+            return new PortalSchoolDto
+            {
+                Id = entity.Id,
+                SlNo = entity.SlNo,
+                Name = entity.Name,
+                Code = entity.Code,
+                Syllabus = entity.Syllabus,
+                Classes = entity.Classes,
+                Location = entity.Location,
+                Website = entity.Website,
+                DisplayOrder = entity.DisplayOrder,
+                IsActive = entity.IsActive,
+                IsDeleted = entity.IsDeleted
+            };
+        }
+
+        private static PortalGuidelineDto MapGuidelineToDto(PortalGuidelineMaster entity)
+        {
+            return new PortalGuidelineDto
+            {
+                Id = entity.Id,
+                DisplayOrder = entity.DisplayOrder,
+                Title = entity.Title,
+                Detail = entity.Detail,
+                Link = entity.Link,
+                LinkText = entity.LinkText,
+                IsActive = entity.IsActive,
+                IsDeleted = entity.IsDeleted
+            };
+        }
+
+        private static PortalConfigDto MapConfigToDto(PortalConfigMaster entity)
+        {
+            return new PortalConfigDto
+            {
+                Id = entity.Id,
+                ConfigKey = entity.ConfigKey,
+                ConfigValue = entity.ConfigValue,
+                Section = entity.Section,
+                Description = entity.Description,
+                IsActive = entity.IsActive,
+                IsDeleted = entity.IsDeleted
+            };
+        }
+        #endregion
     }
 }
