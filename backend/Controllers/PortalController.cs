@@ -319,6 +319,51 @@ namespace RegistrationApi.Controllers
             var relativeUrl = $"documents/{sanitizedName}";
             return Ok(new { message = "Document uploaded successfully.", fileName = sanitizedName, url = relativeUrl });
         }
+
+        /// <summary>
+        /// Uploads a new portal logo image and updates the database configuration
+        /// </summary>
+        [HttpPost("upload-logo")]
+        public async Task<IActionResult> UploadLogo([FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest(new { message = "No file uploaded." });
+
+            var allowedExtensions = new[] { ".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif" };
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(extension))
+                return BadRequest(new { message = "Only image formats (.png, .jpg, .jpeg, .svg, .webp, .gif) are supported." });
+
+            var sanitizedName = $"logo_{DateTime.UtcNow:yyyyMMddHHmmss}{extension}";
+            var imagesDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+            if (!Directory.Exists(imagesDir))
+            {
+                Directory.CreateDirectory(imagesDir);
+            }
+
+            var filePath = Path.Combine(imagesDir, sanitizedName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var relativeUrl = $"images/{sanitizedName}";
+
+            // Update the database configuration entry
+            await _portalService.UpdateConfigAsync("PortalLogoUrl", new UpdateConfigDto
+            {
+                ConfigValue = relativeUrl,
+                Description = "Current Indian Schools Oman Portal Logo",
+                IsActive = true
+            });
+
+            return Ok(new
+            {
+                message = "Logo uploaded and updated in database successfully.",
+                fileName = sanitizedName,
+                url = relativeUrl
+            });
+        }
         #endregion
     }
 }

@@ -135,6 +135,9 @@ namespace Registration.Application.DTOs
         public string HelplineEmail { get; set; } = "admissions@indianschoolsoman.com";
         public string OfficeHours { get; set; } = "Sunday to Thursday (8:00 AM – 2:00 PM)";
         public string AcademicYear { get; set; } = "2026–2027";
+        public string LogoUrl { get; set; } = "assets/logo.png";
+        public string BrandTitle { get; set; } = "Indian Schools Oman";
+        public string BrandSubTitle { get; set; } = "Central Admission System";
     }
 
     public class LandingPageDataDto

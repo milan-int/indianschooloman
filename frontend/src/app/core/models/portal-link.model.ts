@@ -51,6 +51,9 @@ export interface PortalContact {
   helplineEmail: string;
   officeHours: string;
   academicYear: string;
+  logoUrl?: string;
+  brandTitle?: string;
+  brandSubTitle?: string;
 }
 
 export interface LandingPageData {

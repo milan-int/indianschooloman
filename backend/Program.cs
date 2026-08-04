@@ -33,10 +33,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IMasterDataRepository, MasterDataRepository>();
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 builder.Services.AddScoped<IPortalLinkRepository, PortalLinkRepository>();
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
 
 // Register Application Services
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddScoped<IPortalLinkService, PortalLinkService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

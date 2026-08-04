@@ -11,10 +11,12 @@ namespace RegistrationApi.Controllers
     public class RegistrationController : ControllerBase
     {
         private readonly IRegistrationRepository _repository;
+        private readonly IAuthService _authService;
 
-        public RegistrationController(IRegistrationRepository repository)
+        public RegistrationController(IRegistrationRepository repository, IAuthService authService)
         {
             _repository = repository;
+            _authService = authService;
         }
 
         // POST: api/Registration
@@ -108,6 +110,16 @@ namespace RegistrationApi.Controllers
                 }).ToList();
             
             await _repository.AddRegistrationAsync(registration);
+
+            // Auto-provision client user account for parent/student login
+            try
+            {
+                await _authService.CreateClientAccountForRegistrationAsync(registration);
+            }
+            catch
+            {
+                // Account creation exception suppressed if already exists
+            }
 
             return CreatedAtAction(nameof(GetRegistration), new { id = registration.Id }, registration);
         }

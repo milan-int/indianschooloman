@@ -44,7 +44,10 @@ namespace Registration.Application.Services
                 HelplinePhone = configs.FirstOrDefault(c => c.ConfigKey.Equals("HelplinePhone", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "+968 2470 2567 / 2479 9700",
                 HelplineEmail = configs.FirstOrDefault(c => c.ConfigKey.Equals("HelplineEmail", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "admissions@indianschoolsoman.com",
                 OfficeHours = configs.FirstOrDefault(c => c.ConfigKey.Equals("OfficeHours", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "Sunday to Thursday (8:00 AM – 2:00 PM)",
-                AcademicYear = configs.FirstOrDefault(c => c.ConfigKey.Equals("AcademicYear", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "2026–2027"
+                AcademicYear = configs.FirstOrDefault(c => c.ConfigKey.Equals("AcademicYear", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "2026–2027",
+                LogoUrl = configs.FirstOrDefault(c => c.ConfigKey.Equals("PortalLogoUrl", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "assets/logo.png",
+                BrandTitle = configs.FirstOrDefault(c => c.ConfigKey.Equals("BrandTitle", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "Indian Schools Oman",
+                BrandSubTitle = configs.FirstOrDefault(c => c.ConfigKey.Equals("BrandSubTitle", StringComparison.OrdinalIgnoreCase))?.ConfigValue ?? "Central Admission System"
             };
 
             return new LandingPageDataDto

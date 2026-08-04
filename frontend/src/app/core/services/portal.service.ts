@@ -89,4 +89,10 @@ export class PortalService {
   updateConfig(key: string, dto: { configValue: string; description?: string; isActive?: boolean }): Observable<PortalConfig> {
     return this.http.put<PortalConfig>(`${this.baseUrl}/configs/${key}`, dto);
   }
+
+  uploadLogo(file: File): Observable<{ message: string; fileName: string; url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ message: string; fileName: string; url: string }>(`${this.baseUrl}/upload-logo`, formData);
+  }
 }

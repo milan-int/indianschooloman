@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Registration.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Registration.Infrastructure.Data;
 namespace Registration.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260803112743_AddUserAccountsAndRoles")]
+    partial class AddUserAccountsAndRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -756,39 +759,6 @@ namespace Registration.Infrastructure.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             Section = "GENERAL"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ConfigKey = "PortalLogoUrl",
-                            ConfigValue = "assets/logo.png",
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Primary Indian Schools Oman Portal Logo",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Section = "BRANDING"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            ConfigKey = "BrandTitle",
-                            ConfigValue = "Indian Schools Oman",
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Main Brand Title",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Section = "BRANDING"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            ConfigKey = "BrandSubTitle",
-                            ConfigValue = "Central Admission System",
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Main Brand Subtitle",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Section = "BRANDING"
                         });
                 });
 

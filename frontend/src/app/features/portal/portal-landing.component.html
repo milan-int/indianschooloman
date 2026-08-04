@@ -1,501 +1,1315 @@
 <div class="portal-root" [class.wizard-mode]="currentView === 'wizard'">
 
-  <!-- Header Section (Only on Portal / Guidelines view) -->
-  <header *ngIf="currentView !== 'wizard'" class="portal-header">
-    <div class="header-container">
-      <div class="brand-box">
-        <img src="assets/logo.png" alt="Board of Directors Indian Schools, Sultanate of Oman" class="brand-logo" />
-      </div>
-      <div class="header-contact-widgets">
-        <div class="contact-pill">
-          <span class="pill-icon">📞</span>
-          <div class="pill-text">
-            <span class="pill-title">Admission Helpline</span>
-            <span class="pill-val">{{ contact.helplinePhone }}</span>
-          </div>
-        </div>
-        <div class="contact-pill">
-          <span class="pill-icon">🕒</span>
-          <div class="pill-text">
-            <span class="pill-title">Office Hours</span>
-            <span class="pill-val">{{ contact.officeHours }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
+  <!-- Admin Toast Notification -->
+  <div *ngIf="adminNotification" class="toast-alert-float" [ngClass]="adminNotification.type">
+    <span class="toast-icon">{{ adminNotification.type === 'success' ? '✅' : '⚠️' }}</span>
+    <span class="toast-msg">{{ adminNotification.message }}</span>
+  </div>
 
-  <!-- Modern Sticky Nav Bar (Only on Portal / Guidelines view) -->
-  <nav *ngIf="currentView !== 'wizard'" class="portal-navbar">
-    <div class="nav-inner">
-      <div class="nav-tabs">
-        <button class="nav-tab-btn" [class.active]="currentView === 'links'" (click)="goToLinks()">
-          <span class="tab-icon">🏠</span> Admission Portal
+  <!-- Top Session Bar (When Logged In as Client / Applicant) -->
+  <div *ngIf="currentUser && currentView !== 'wizard' && currentView !== 'admin'" class="adv-session-bar">
+    <div class="adv-session-inner">
+      <div class="adv-session-brand">
+        <div class="adv-logo-gem">
+          <img src="assets/modern-emblem.jpg" [alt]="brandTitle" class="adv-session-logo" />
+        </div>
+        <div class="adv-session-brand-info">
+          <div class="adv-session-role-badge">
+            <span class="adv-session-role-dot"></span>
+            <span class="adv-session-role">APPLICANT</span>
+          </div>
+          <span class="adv-session-name">{{ currentUser.fullName || currentUser.username }}</span>
+        </div>
+      </div>
+      <div class="adv-session-actions">
+        <button class="adv-nav-btn" [class.active]="currentView === 'client'" (click)="currentView = 'client'">
+          <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          My Application
         </button>
-        <button class="nav-tab-btn" [class.active]="currentView === 'guidelines'" (click)="openNewApplication()">
-          <span class="tab-icon">📜</span> Guidelines & Schools
+        <button class="adv-nav-btn" [class.active]="currentView === 'links'" (click)="goToLinks()">
+          🏠 Portal Home
+        </button>
+        <button class="adv-logout-btn" (click)="onLogout()">
+          <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Sign Out
         </button>
       </div>
-
-      <div class="nav-right-meta">
-        <span class="system-status-chip">
-          <span class="status-dot"></span> System Online
-        </span>
-      </div>
     </div>
-  </nav>
+  </div>
 
-  <!-- Full-Screen Dedicated Registration Wizard (Original UI) -->
+  <!-- Full-Screen Dedicated Registration Wizard -->
   <div *ngIf="currentView === 'wizard'" class="pure-wizard-wrapper fade-in">
     <app-registration-wizard (backToPortal)="goToLinks()"></app-registration-wizard>
   </div>
 
-  <!-- Main Portal Layout (Left Hub + Right Auth Card) -->
-  <main *ngIf="currentView !== 'wizard'" class="portal-main-section">
-    <div class="portal-content-container">
+  <!-- ================= ADMIN SUITE WITH ADVANCED MODERN SIDEBAR ================= -->
+  <div *ngIf="currentView === 'admin' && currentUser?.role === 'ADMIN'" class="admin-app-shell fade-in">
+    
+    <!-- Sleek Glassmorphism Left Sidebar -->
+    <aside class="admin-sidebar">
+      
+      <!-- Brand & School Crest Header -->
+      <div class="admin-sidebar-header">
+        <div class="sidebar-logo-gem">
+          <img src="assets/modern-emblem.jpg" [alt]="brandTitle" class="sidebar-logo-img" />
+          <div class="logo-gem-sheen"></div>
+        </div>
+        <div class="sidebar-brand-meta">
+          <div class="sidebar-portal-badge">
+            <span class="badge-live-dot"></span>
+            <span>ADMIN SUITE</span>
+          </div>
+          <h3 class="sidebar-portal-heading">Indian Schools</h3>
+          <span class="sidebar-portal-sub">Sultanate of Oman</span>
+        </div>
+      </div>
 
-      <!-- Hero Banner Card -->
-      <section class="hero-showcase-card">
-        <div class="hero-image-box">
-          <img src="assets/hero-banner.jpg" alt="Indian Schools Oman" class="hero-backdrop-img" />
-          <div class="hero-gradient-overlay">
-            <div class="hero-text-content">
-              <span class="hero-mini-badge">OFFICIAL ADMISSION PORTAL</span>
-              <h1 class="hero-main-title">Indian Schools in the Sultanate of Oman</h1>
-              <p class="hero-subtitle">Centralized Online Admission System for Indian Nationals & Expatriate Communities</p>
-              
-              <div class="hero-stats-row">
-                <div class="stat-bubble">
-                  <strong>{{ schools.length }}</strong> Capital Area Schools
-                </div>
-                <div class="stat-bubble">
-                  <strong>CBSE & Cambridge</strong> Syllabuses
-                </div>
-                <div class="stat-bubble">
-                  <strong>KG I – IX & XI</strong> Eligible Grades
-                </div>
+      <!-- Navigation Menus with Section Group Headings -->
+      <nav class="sidebar-nav-container">
+        
+        <div class="nav-group-section">
+          <div class="nav-group-header">
+            <span>ADMISSIONS</span>
+          </div>
+          <button class="sidebar-nav-btn" [class.active]="adminTab === 'applications'" (click)="adminTab = 'applications'; loadAdminApplications();">
+            <div class="sidebar-nav-icon icon-app">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            </div>
+            <span class="nav-btn-label">Applications & Details</span>
+            <span class="nav-btn-counter">{{ adminApplications.length }}</span>
+            <div class="nav-active-bar"></div>
+          </button>
+        </div>
+
+        <div class="nav-group-section">
+          <div class="nav-group-header">
+            <span>CONTENT & MATRIX</span>
+          </div>
+          <button class="sidebar-nav-btn" [class.active]="adminTab === 'guidelines'" (click)="adminTab = 'guidelines'">
+            <div class="sidebar-nav-icon icon-guide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </div>
+            <span class="nav-btn-label">Guidelines Master</span>
+            <span class="nav-btn-counter">{{ allGuidelines.length }}</span>
+            <div class="nav-active-bar"></div>
+          </button>
+
+          <button class="sidebar-nav-btn" [class.active]="adminTab === 'schools'" (click)="adminTab = 'schools'">
+            <div class="sidebar-nav-icon icon-school">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><line x1="9" y1="9" x2="10" y2="9"></line><line x1="14" y1="9" x2="15" y2="9"></line></svg>
+            </div>
+            <span class="nav-btn-label">Schools Matrix</span>
+            <span class="nav-btn-counter">{{ allSchools.length }}</span>
+            <div class="nav-active-bar"></div>
+          </button>
+
+          <button class="sidebar-nav-btn" [class.active]="adminTab === 'links'" (click)="adminTab = 'links'">
+            <div class="sidebar-nav-icon icon-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </div>
+            <span class="nav-btn-label">Portal Links Master</span>
+            <span class="nav-btn-counter">{{ allLinks.length }}</span>
+            <div class="nav-active-bar"></div>
+          </button>
+        </div>
+
+        <div class="nav-group-section">
+          <div class="nav-group-header">
+            <span>SETTINGS & CONTROL</span>
+          </div>
+          <button class="sidebar-nav-btn" [class.active]="adminTab === 'configs'" (click)="adminTab = 'configs'">
+            <div class="sidebar-nav-icon icon-config">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2-2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </div>
+            <span class="nav-btn-label">Portal Configurations</span>
+            <span class="nav-btn-counter">{{ allConfigs.length }}</span>
+            <div class="nav-active-bar"></div>
+          </button>
+
+          <button class="sidebar-nav-btn" [class.active]="adminTab === 'users'" (click)="adminTab = 'users'; loadUsers();">
+            <div class="sidebar-nav-icon icon-user">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <span class="nav-btn-label">System Accounts</span>
+            <span class="nav-btn-counter">{{ allUsers.length }}</span>
+            <div class="nav-active-bar"></div>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer User Profile Card -->
+      <div class="sidebar-footer-card">
+        <div class="sidebar-user-avatar">
+          <span>{{ (currentUser?.username || 'AD').substring(0, 2).toUpperCase() }}</span>
+        </div>
+        <div class="sidebar-user-details">
+          <div class="sidebar-user-name" [title]="currentUser?.fullName || currentUser?.username">
+            {{ currentUser?.fullName || currentUser?.username }}
+          </div>
+          <div class="sidebar-user-status">
+            <span class="status-live-beacon"></span>
+            <span>Administrator</span>
+          </div>
+        </div>
+        <button class="sidebar-quick-logout" (click)="onLogout()" title="Sign Out of Admin Portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Main Content Area / Stage -->
+    <main class="admin-main-stage">
+      
+      <!-- Top Dynamic Command Bar -->
+      <header class="admin-stage-header">
+        <div class="stage-header-title-block">
+          <div class="stage-breadcrumb">
+            <span class="crumb-lead">Admin Suite</span>
+            <span class="crumb-arrow">/</span>
+            <span class="crumb-active">
+              {{ adminTab === 'applications' ? 'Applications & People Details' : adminTab === 'guidelines' ? 'Guidelines Master' : adminTab === 'schools' ? 'Schools Matrix' : adminTab === 'links' ? 'Portal Links Master' : adminTab === 'configs' ? 'Portal Configurations' : 'System Accounts' }}
+            </span>
+          </div>
+          <h1 class="stage-title">
+            {{ adminTab === 'applications' ? 'Central Student Admissions & Verification' : adminTab === 'guidelines' ? 'Admission Guidelines & Policies Master' : adminTab === 'schools' ? 'Schools Directory & Capacity Matrix' : adminTab === 'links' ? 'Portal Navigation & Resource Links' : adminTab === 'configs' ? 'Portal System Settings & Assets' : 'User Security & Staff Accounts' }}
+          </h1>
+        </div>
+        <div class="stage-header-actions">
+          <div class="stage-live-badge">
+            <span class="pulse-beacon"></span>
+            <span>Database Active</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- TAB 1: APPLICATIONS & PEOPLE DETAILS PAGE -->
+      <section *ngIf="adminTab === 'applications'" class="admin-table-section">
+        
+        <!-- ================= 1A. ALL APPLICATIONS TABLE VIEW ================= -->
+        <div *ngIf="!isViewingApplicantPage">
+          <!-- Live Dashboard Stats Cards for Admissions -->
+          <div *ngIf="adminStats" class="admin-stats-grid">
+            <div class="stat-card stat-total">
+              <div class="stat-icon-wrap icon-total">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <path d="M9 12h6"></path>
+                  <path d="M9 16h6"></path>
+                </svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-val">{{ adminStats.totalApplications }}</span>
+                <span class="stat-lbl">Total Applications</span>
+              </div>
+            </div>
+            <div class="stat-card stat-submitted">
+              <div class="stat-icon-wrap icon-submitted">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 12h-6l-2 3h-4l-2-3H2"></path>
+                  <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                </svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-val">{{ adminStats.submittedCount }}</span>
+                <span class="stat-lbl">Submitted / New</span>
+              </div>
+            </div>
+            <div class="stat-card stat-underver">
+              <div class="stat-icon-wrap icon-underver">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  <path d="M11 8v6"></path>
+                  <path d="M8 11h6"></path>
+                </svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-val">{{ adminStats.underVerificationCount }}</span>
+                <span class="stat-lbl">Under Verification</span>
+              </div>
+            </div>
+            <div class="stat-card stat-approved">
+              <div class="stat-icon-wrap icon-approved">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-val">{{ adminStats.approvedCount + adminStats.seatAllottedCount }}</span>
+                <span class="stat-lbl">Approved / Allotted</span>
+              </div>
+            </div>
+            <div class="stat-card stat-schools">
+              <div class="stat-icon-wrap icon-schools">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 21h18"></path>
+                  <path d="M5 21V7l7-4 7 4v14"></path>
+                  <path d="M9 10h1"></path>
+                  <path d="M14 10h1"></path>
+                  <path d="M9 14h1"></path>
+                  <path d="M14 14h1"></path>
+                  <path d="M11 21v-4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v4"></path>
+                </svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-val">{{ adminStats.totalSchools }}</span>
+                <span class="stat-lbl">Active Campuses</span>
               </div>
             </div>
           </div>
+          
+          <!-- Filter and Search Bar -->
+          <div class="admin-filter-bar">
+            <div class="filter-search-box">
+              <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input 
+                type="text" 
+                [(ngModel)]="appSearchTerm" 
+                (input)="loadAdminApplications()"
+                placeholder="Search by Registration No, Pupil Name, Passport No, Parent Email, Mobile..." 
+              />
+              <button *ngIf="appSearchTerm" class="btn-clear-search" (click)="appSearchTerm = ''; loadAdminApplications()">✕</button>
+            </div>
+
+            <div class="filter-dropdowns">
+              <div class="filter-group">
+                <label>Status:</label>
+                <select [(ngModel)]="appFilterStatus" (change)="loadAdminApplications()">
+                  <option value="ALL">All Statuses</option>
+                  <option value="SUBMITTED">Submitted</option>
+                  <option value="UNDER_VERIFICATION">Under Verification</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="SEAT_ALLOTTED">Seat Allotted</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>Campus / School:</label>
+                <select [(ngModel)]="appFilterSchool" (change)="loadAdminApplications()">
+                  <option value="ALL">All Schools</option>
+                  <option *ngFor="let s of allSchools" [value]="s.name">{{ s.name }} ({{ s.code }})</option>
+                </select>
+              </div>
+
+              <button class="btn-refresh-data" (click)="loadAdminApplications(); loadAdminStats()" title="Reload list">
+                <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading Apps Indicator -->
+          <div *ngIf="isLoadingApps" class="state-loading-box">
+            <div class="pulsing-loader"></div>
+            <span>Filtering applicant records from database...</span>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!isLoadingApps && adminApplications.length === 0" class="admin-empty-state">
+            <div class="empty-icon">📂</div>
+            <h4>No Application Records Found</h4>
+            <p>No student submissions match your search query or filters.</p>
+          </div>
+
+          <!-- Applications Table -->
+          <div *ngIf="!isLoadingApps && adminApplications.length > 0" class="table-responsive">
+            <table class="admin-crud-table applications-table">
+              <thead>
+                <tr>
+                  <th>Reg. No & Date</th>
+                  <th>Student / Pupil</th>
+                  <th>Admission Class</th>
+                  <th>Parent / Contact</th>
+                  <th>School Preferences</th>
+                  <th>Status</th>
+                  <th class="actions-header">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let app of adminApplications" [class.row-highlight]="selectedApplicant?.id === app.id">
+                  <td>
+                    <strong class="reg-no-badge">{{ app.registrationNo }}</strong>
+                    <span class="sub-meta-date">{{ app.createdAt | date:'dd MMM yyyy, HH:mm' }}</span>
+                  </td>
+                  <td>
+                    <div class="pupil-name-cell">
+                      <span class="student-name">{{ app.studentFullName || 'N/A' }}</span>
+                      <span class="sub-meta">Passport: {{ app.passportNumber }} • {{ app.gender }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="class-badge">{{ app.admissionClass }}</span>
+                    <span *ngIf="app.siblingCount > 0" class="sibling-indicator-chip">👨‍👩‍👧 Sibling</span>
+                  </td>
+                  <td>
+                    <div class="parent-name-cell">
+                      <span class="parent-name">{{ app.parentFullName }} ({{ app.parentRelationship }})</span>
+                      <span class="sub-meta">📱 {{ app.parentMobileNo }}</span>
+                      <span class="sub-meta">✉️ {{ app.parentEmail }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="table-prefs-stack" *ngIf="getApplicantPreferences(app).length > 0">
+                      <div *ngFor="let pref of getApplicantPreferences(app)" class="table-pref-chip" [class.primary]="pref.order === 1">
+                        <span class="pref-rank-badge">#{{ pref.order }}</span>
+                        <span class="pref-school-name">{{ pref.name }}</span>
+                      </div>
+                    </div>
+                    <span *ngIf="getApplicantPreferences(app).length === 0" class="text-muted no-pref-text">
+                      No preferences recorded
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-pill" [ngClass]="app.status.toLowerCase()">
+                      {{ app.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons-cell">
+                      <button class="btn-action-view" (click)="inspectApplicant(app.id)" title="Open Full Applicant Dossier Page">
+                        <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        Inspect Dossier
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= 1B. DEDICATED FULL-PAGE APPLICANT DOSSIER VIEW ================= -->
+        <div *ngIf="isViewingApplicantPage" class="applicant-fullpage-dossier fade-in">
+          
+          <!-- Top Navigation Header -->
+          <div class="dossier-page-topbar">
+            <div class="dossier-topbar-left">
+              <button class="btn-back-to-list" (click)="closeApplicantModal()">
+                <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Back to Applications
+              </button>
+              <div class="dossier-pupil-title-wrap">
+                <div class="dossier-chips-line">
+                  <span class="dossier-badge-pill">APPLICANT DOSSIER</span>
+                  <span class="dossier-reg-num">{{ selectedApplicant?.registrationNo }}</span>
+                  <span *ngIf="selectedApplicant" class="status-pill-lg" [ngClass]="selectedApplicant.status?.toLowerCase()">
+                    {{ selectedApplicant.status }}
+                  </span>
+                </div>
+                <h2 class="dossier-pupil-name">
+                  {{ selectedApplicant?.student?.givenName }} {{ selectedApplicant?.student?.surname }}
+                  <span class="class-badge" *ngIf="selectedApplicant?.student?.admissionClass">{{ selectedApplicant?.student?.admissionClass }}</span>
+                </h2>
+              </div>
+            </div>
+
+            <div class="dossier-topbar-right">
+              <button class="btn-print-dossier" (click)="printApplicantDossier()" title="Print Application Document">
+                <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                Print Dossier
+              </button>
+              <button class="btn-close-dossier-page" (click)="closeApplicantModal()" title="Close Dossier">
+                ✕ Close
+              </button>
+            </div>
+          </div>
+
+          <!-- 4-Page Navigation Stepper Bar -->
+          <div *ngIf="selectedApplicant" class="dossier-stepper-full">
+            <button class="dossier-step-tab" [class.active]="applicantModalPage === 1" (click)="setApplicantModalPage(1)">
+              <span class="step-badge">1</span>
+              <div class="step-meta">
+                <span class="step-title">Student Profile</span>
+                <span class="step-desc">Personal & Passport Info</span>
+              </div>
+            </button>
+            <button class="dossier-step-tab" [class.active]="applicantModalPage === 2" (click)="setApplicantModalPage(2)">
+              <span class="step-badge">2</span>
+              <div class="step-meta">
+                <span class="step-title">Parent & Family</span>
+                <span class="step-desc">Guardian & Contact Details</span>
+              </div>
+            </button>
+            <button class="dossier-step-tab" [class.active]="applicantModalPage === 3" (click)="setApplicantModalPage(3)">
+              <span class="step-badge">3</span>
+              <div class="step-meta">
+                <span class="step-title">Residential Address</span>
+                <span class="step-desc">Oman & Permanent Home</span>
+              </div>
+            </button>
+            <button class="dossier-step-tab" [class.active]="applicantModalPage === 4" (click)="setApplicantModalPage(4)">
+              <span class="step-badge">4</span>
+              <div class="step-meta">
+                <span class="step-title">Preferences & Actions</span>
+                <span class="step-desc">School Choices & Approval</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- Preferences Header Ribbon -->
+          <div *ngIf="selectedApplicant && getApplicantPreferences(selectedApplicant).length > 0" class="dossier-pref-ribbon">
+            <div class="pref-ribbon-title">
+              <span class="pref-ribbon-icon">🏛️</span>
+              <span class="pref-ribbon-label">Applicant School Preferences:</span>
+            </div>
+            <div class="pref-ribbon-pills">
+              <div *ngFor="let pref of getApplicantPreferences(selectedApplicant)" class="pref-ribbon-chip" [class.choice-1]="pref.order === 1" [class.choice-2]="pref.order === 2" [class.choice-3]="pref.order >= 3">
+                <span class="ribbon-rank-num">Choice #{{ pref.order }}</span>
+                <span class="ribbon-school-title">{{ pref.name }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading Full Details State -->
+          <div *ngIf="isLoadingApplicantDetail || !selectedApplicant" class="state-loading-box" style="margin: 40px 0;">
+            <div class="pulsing-loader"></div>
+            <span>Retrieving applicant details & dossier files from database...</span>
+          </div>
+
+          <!-- Dossier Body Container -->
+          <div *ngIf="!isLoadingApplicantDetail && selectedApplicant" class="dossier-fullpage-content">
+
+            <!-- ================= PAGE 1: STUDENT PROFILE ================= -->
+            <div *ngIf="applicantModalPage === 1" class="dossier-fullpage-pane fade-in">
+              <div class="dossier-pane-card">
+                <div class="dossier-card-title-bar">
+                  <span class="dossier-pane-icon">🧒</span>
+                  <div>
+                    <h3 class="pane-h3">Page 1: Student / Pupil Information</h3>
+                    <p class="pane-sub">Full legal name, birth details, nationality, passport validity, and residence visa records.</p>
+                  </div>
+                </div>
+
+                <div class="dossier-grid-spacious">
+                  <div class="data-block">
+                    <span class="data-label">Given / First Name</span>
+                    <span class="data-value highlight">{{ selectedApplicant.student?.givenName || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Surname / Last Name</span>
+                    <span class="data-value highlight">{{ selectedApplicant.student?.surname || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Class Seeking Admission</span>
+                    <span class="data-value"><span class="class-badge-lg">{{ selectedApplicant.student?.admissionClass }}</span></span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Date of Birth</span>
+                    <span class="data-value font-mono">{{ selectedApplicant.student?.dateOfBirth | date:'dd MMMM yyyy' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Gender</span>
+                    <span class="data-value">{{ selectedApplicant.student?.gender || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Nationality</span>
+                    <span class="data-value">{{ selectedApplicant.student?.nationality || 'India' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Passport Number</span>
+                    <span class="data-value font-mono font-bold">{{ selectedApplicant.student?.passportNumber || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Passport Expiry Date</span>
+                    <span class="data-value font-mono">{{ selectedApplicant.student?.passportExpiryDate | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Resident Visa Number</span>
+                    <span class="data-value font-mono">{{ selectedApplicant.student?.visaNumber || 'N/A' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Visa Expiry Date</span>
+                    <span class="data-value font-mono">{{ selectedApplicant.student?.visaExpiryDate ? (selectedApplicant.student?.visaExpiryDate | date:'dd/MM/yyyy') : 'N/A' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Mother Tongue</span>
+                    <span class="data-value">{{ selectedApplicant.student?.motherTongue || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Place of Birth</span>
+                    <span class="data-value">{{ selectedApplicant.student?.placeOfBirth || '—' }}</span>
+                  </div>
+                  <div class="data-block span-full">
+                    <span class="data-label">Preferred School Campuses ({{ getApplicantPreferences(selectedApplicant).length }} Choice(s))</span>
+                    <div class="page1-prefs-inline-chips">
+                      <span *ngFor="let p of getApplicantPreferences(selectedApplicant)" class="p1-pref-badge" [class.primary]="p.order === 1">
+                        <strong>#{{ p.order }}</strong> {{ p.name }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= PAGE 2: PARENT & FAMILY ================= -->
+            <div *ngIf="applicantModalPage === 2" class="dossier-fullpage-pane fade-in">
+              <div class="dossier-pane-card">
+                <div class="dossier-card-title-bar">
+                  <span class="dossier-pane-icon">👨‍👩‍👧</span>
+                  <div>
+                    <h3 class="pane-h3">Page 2: Parent & Guardian Details</h3>
+                    <p class="pane-sub">Primary sponsor, employment, Civil ID, GSM phone, and emergency contact details.</p>
+                  </div>
+                </div>
+
+                <div class="dossier-grid-spacious">
+                  <div class="data-block">
+                    <span class="data-label">Parent / Guardian Full Name</span>
+                    <span class="data-value highlight">{{ selectedApplicant.parent?.givenName }} {{ selectedApplicant.parent?.surname }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Relationship to Student</span>
+                    <span class="data-value font-bold">{{ selectedApplicant.parent?.relationship }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Civil ID / Resident ID</span>
+                    <span class="data-value font-mono font-bold">{{ selectedApplicant.parent?.civilId || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Parent Nationality</span>
+                    <span class="data-value">{{ selectedApplicant.parent?.nationality || 'India' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Mobile GSM Number</span>
+                    <span class="data-value contact-val font-mono font-bold">📱 {{ selectedApplicant.parent?.mobileNo || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Official Email Address</span>
+                    <span class="data-value contact-val">✉️ {{ selectedApplicant.parent?.email || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Employer / Company Name</span>
+                    <span class="data-value">{{ selectedApplicant.parent?.employer || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Occupation / Designation</span>
+                    <span class="data-value">{{ selectedApplicant.parent?.occupation || '—' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= PAGE 3: RESIDENTIAL ADDRESS & SIBLINGS ================= -->
+            <div *ngIf="applicantModalPage === 3" class="dossier-fullpage-pane fade-in">
+              <div class="dossier-pane-card">
+                <div class="dossier-card-title-bar">
+                  <span class="dossier-pane-icon">📍</span>
+                  <div>
+                    <h3 class="pane-h3">Page 3: Residential Address & Location</h3>
+                    <p class="pane-sub">Physical address in the Sultanate of Oman & permanent home country address.</p>
+                  </div>
+                </div>
+
+                <div class="dossier-grid-spacious">
+                  <div class="data-block">
+                    <span class="data-label">Locality / Wilayat / Area</span>
+                    <span class="data-value highlight">{{ selectedApplicant.address?.locality || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Street Name</span>
+                    <span class="data-value">{{ selectedApplicant.address?.streetName || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Building / House / Flat No</span>
+                    <span class="data-value">{{ selectedApplicant.address?.houseNo || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Way / Lane Number</span>
+                    <span class="data-value">{{ selectedApplicant.address?.laneWayNo || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Postal Code</span>
+                    <span class="data-value font-mono">{{ selectedApplicant.address?.postalCode || '—' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">P.O. Box Number</span>
+                    <span class="data-value font-mono">{{ selectedApplicant.address?.poBox || '—' }}</span>
+                  </div>
+                  <div class="data-block span-full">
+                    <span class="data-label">Permanent Home Country Address (India)</span>
+                    <span class="data-value address-box">{{ selectedApplicant.address?.permanentAddress || '—' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= PAGE 4: PREFERENCES, ACADEMICS & ACTIONS ================= -->
+            <div *ngIf="applicantModalPage === 4" class="dossier-fullpage-pane fade-in">
+              
+              <!-- Previous School Credentials -->
+              <div class="dossier-pane-card" style="margin-bottom: 24px;">
+                <div class="dossier-card-title-bar">
+                  <span class="dossier-pane-icon">🏫</span>
+                  <div>
+                    <h3 class="pane-h3">Academic Background & Sibling Information</h3>
+                    <p class="pane-sub">Previous school credentials and existing family siblings enrolled in Indian Schools.</p>
+                  </div>
+                </div>
+
+                <div class="dossier-grid-spacious">
+                  <div class="data-block">
+                    <span class="data-label">Previous School Attended</span>
+                    <span class="data-value highlight">{{ selectedApplicant.applicationDetail?.previousSchoolName || 'N/A' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Previous School Country</span>
+                    <span class="data-value">{{ selectedApplicant.applicationDetail?.previousSchoolCountry || 'N/A' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Class Last Studied</span>
+                    <span class="data-value">{{ selectedApplicant.applicationDetail?.previousClassStudied || 'N/A' }}</span>
+                  </div>
+                  <div class="data-block">
+                    <span class="data-label">Siblings in Indian Schools</span>
+                    <span class="data-value">{{ selectedApplicant.applicationDetail?.siblingsInIndianSchools || 0 }} sibling(s)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ordered School Preferences -->
+              <div class="dossier-pane-card pref-highlight-card" style="margin-bottom: 24px;">
+                <div class="dossier-card-title-bar">
+                  <span class="dossier-pane-icon">🏛️</span>
+                  <div>
+                    <h3 class="pane-h3">Ordered Campus Preferences ({{ getApplicantPreferences(selectedApplicant).length }} Choice(s) Submitted)</h3>
+                    <p class="pane-sub">Ranked school campus preferences submitted by parent for admission seat allocation.</p>
+                  </div>
+                </div>
+
+                <div class="prefs-cards-grid">
+                  <div *ngFor="let p of getApplicantPreferences(selectedApplicant)" class="pref-card-showcase" [class.rank-1-card]="p.order === 1">
+                    <div class="pref-card-rank-badge">
+                      <span class="rank-title">Priority Choice</span>
+                      <span class="rank-number">#{{ p.order }}</span>
+                    </div>
+                    <div class="pref-card-content">
+                      <div class="pref-campus-icon">🏫</div>
+                      <div class="pref-campus-details">
+                        <h4 class="pref-campus-title">{{ p.name }}</h4>
+                        <span class="pref-campus-sub" *ngIf="p.order === 1">Primary Preferred Campus for Seat Allocation</span>
+                        <span class="pref-campus-sub" *ngIf="p.order > 1">Alternative Option Choice #{{ p.order }}</span>
+                      </div>
+                    </div>
+                    <div class="pref-card-tag">
+                      <span class="pref-status-indicator" [class.status-active]="p.order === 1">
+                        {{ p.order === 1 ? '🌟 1st Preference' : 'Choice #' + p.order }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div *ngIf="getApplicantPreferences(selectedApplicant).length === 0" class="empty-prefs-box">
+                    <span>No specific school preferences recorded for this applicant.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Admin Verification & Action Controls -->
+              <div class="dossier-pane-card admin-action-card">
+                <div class="dossier-card-title-bar">
+                  <span class="dossier-pane-icon">⚖️</span>
+                  <div>
+                    <h3 class="pane-h3">Administrative Action & Status Verification</h3>
+                    <p class="pane-sub">Enter processing remarks and update the formal status of this application.</p>
+                  </div>
+                </div>
+
+                <div class="admin-decision-box">
+                  <div class="form-group-full">
+                    <label class="form-label-bold">Internal Processing Remarks / Allotted Campus Notes:</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="statusUpdateRemarks" 
+                      placeholder="e.g., Documents verified. Seat allotted at Indian School Muscat (ISM) Morning Shift." 
+                      class="admin-remarks-input"
+                    />
+                  </div>
+
+                  <div class="status-action-row">
+                    <button 
+                      class="btn-status-lg btn-verify" 
+                      [disabled]="isUpdatingStatus" 
+                      (click)="updateApplicantStatus(selectedApplicant.id, 'UNDER_VERIFICATION')"
+                    >
+                      🔍 Put Under Verification
+                    </button>
+                    <button 
+                      class="btn-status-lg btn-approve" 
+                      [disabled]="isUpdatingStatus" 
+                      (click)="updateApplicantStatus(selectedApplicant.id, 'APPROVED')"
+                    >
+                      ✅ Approve Application
+                    </button>
+                    <button 
+                      class="btn-status-lg btn-allot" 
+                      [disabled]="isUpdatingStatus" 
+                      (click)="updateApplicantStatus(selectedApplicant.id, 'SEAT_ALLOTTED')"
+                    >
+                      🏫 Allot Seat
+                    </button>
+                    <button 
+                      class="btn-status-lg btn-reject" 
+                      [disabled]="isUpdatingStatus" 
+                      (click)="updateApplicantStatus(selectedApplicant.id, 'REJECTED')"
+                    >
+                      ✕ Reject Application
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Bottom Stepper Navigation Bar -->
+          <div class="dossier-bottom-nav">
+            <div class="nav-left">
+              <button class="btn-dossier-back" (click)="closeApplicantModal()">
+                ← Back to Applications List
+              </button>
+            </div>
+            
+            <div class="nav-center">
+              <span class="stepper-count-pill">Page <strong>{{ applicantModalPage }}</strong> of 4</span>
+            </div>
+
+            <div class="nav-right">
+              <button *ngIf="applicantModalPage > 1" class="btn-dossier-prev" (click)="prevApplicantModalPage()">
+                ← Previous Page
+              </button>
+              <button *ngIf="applicantModalPage < 4" class="btn-dossier-next" (click)="nextApplicantModalPage()">
+                Next Page →
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 2: GUIDELINES MASTER PAGE -->
+      <section *ngIf="adminTab === 'guidelines'" class="admin-table-section">
+        <div class="section-action-header">
+          <div class="section-title-wrap">
+            <h3 class="admin-section-heading">Admission Guidelines & Policies Master</h3>
+            <p class="admin-section-sub">Instructions presented to parents during online admission submission.</p>
+          </div>
+          <div class="section-header-right-actions">
+            <span class="count-pill">{{ adminFilteredGuidelines.length }} Published</span>
+            <button class="btn-primary-admin" (click)="openAddGuideline()">+ Add New Guideline</button>
+          </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="admin-filter-bar">
+          <div class="filter-search-box">
+            <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input 
+              type="text" 
+              [(ngModel)]="guidelineSearchTerm" 
+              placeholder="Search guidelines by title or content details..."
+              class="search-input"
+            />
+            <button *ngIf="guidelineSearchTerm" class="search-clear-btn" (click)="guidelineSearchTerm = ''">✕</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-crud-table">
+            <thead>
+              <tr>
+                <th style="width: 70px;">Order</th>
+                <th style="width: 240px;">Title</th>
+                <th>Instruction Detail</th>
+                <th style="width: 140px;">External Link</th>
+                <th style="width: 110px;">Status</th>
+                <th class="actions-header" style="width: 180px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let g of adminFilteredGuidelines" [class.inactive-row]="!g.isActive">
+                <td class="order-cell">{{ g.displayOrder || g.id }}</td>
+                <td class="title-cell"><strong>{{ g.title }}</strong></td>
+                <td class="detail-cell">{{ g.detail }}</td>
+                <td>
+                  <a *ngIf="g.link" [href]="g.link" target="_blank" class="table-link-preview">{{ g.linkText || 'Link' }} ↗</a>
+                  <span *ngIf="!g.link" class="text-muted">—</span>
+                </td>
+                <td>
+                  <span class="status-badge" [class.badge-active]="g.isActive" [class.badge-inactive]="!g.isActive">
+                    {{ g.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-btn-group">
+                    <button class="btn-action-icon edit" (click)="openEditGuideline(g)" title="Edit">✏️</button>
+                    <button class="btn-action-icon toggle" (click)="toggleGuideline(g)" [title]="g.isActive ? 'Deactivate' : 'Activate'">
+                      {{ g.isActive ? '⏸️' : '▶️' }}
+                    </button>
+                    <button class="btn-action-icon delete" (click)="deleteGuideline(g)" title="Soft Delete">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="adminFilteredGuidelines.length === 0">
+                <td colspan="6" class="text-center py-5 text-muted">
+                  No guidelines found matching "<strong>{{ guidelineSearchTerm }}</strong>".
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
-      <!-- 2-Column Responsive Dashboard -->
-      <div class="dashboard-grid">
-        
-        <!-- ================= LEFT COLUMN ================= -->
-        <div class="dashboard-main-col">
-
-          <!-- VIEW A: ADMISSION HUB & LINKS -->
-          <div *ngIf="currentView === 'links'" class="view-card-wrapper fade-in">
-            
-            <!-- Highlighted NEW APPLICATION Hero Banner -->
-            <div class="new-app-cta-banner" (click)="openNewApplication()">
-              <div class="cta-banner-left">
-                <div class="cta-sparkle-badge">ADMISSIONS OPEN</div>
-                <h2 class="cta-title">Apply for New Student Admission</h2>
-                <p class="cta-desc">For Classes KG I to Class IX (Academic Year {{ contact.academicYear }}). Read guidelines and complete your 4-step registration online.</p>
-                <div class="cta-features">
-                  <span>✓ 100% Online</span>
-                  <span>✓ Instant Registration No.</span>
-                  <span>✓ Multi-School Preferences</span>
-                </div>
-              </div>
-              <div class="cta-banner-right">
-                <button class="btn-start-app">
-                  <span>Start Application</span>
-                  <span class="arrow-right">→</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Search & Filter Bar for Links -->
-            <div class="section-filter-bar">
-              <div class="filter-header">
-                <h3 class="section-title">Admission Circulars & Downloads</h3>
-                <span class="count-badge">{{ filteredLinks.length }} Resources</span>
-              </div>
-              <div class="search-input-wrapper">
-                <span class="search-icon">🔍</span>
-                <input 
-                  type="text" 
-                  [(ngModel)]="linkSearchQuery" 
-                  placeholder="Search guidelines, transfer rules, FAQs..." 
-                  class="search-field"
-                />
-                <button *ngIf="linkSearchQuery" (click)="linkSearchQuery = ''" class="btn-clear-search">✕</button>
-              </div>
-            </div>
-
-            <!-- Loading State -->
-            <div *ngIf="isLoadingData" class="state-loading-box">
-              <div class="pulsing-loader"></div>
-              <span>Connecting to Portal Service & Loading circulars...</span>
-            </div>
-
-            <!-- Dynamic Links Grid -->
-            <div class="resources-grid" *ngIf="!isLoadingData">
-              <div 
-                *ngFor="let link of filteredLinks" 
-                class="resource-card"
-                [class.featured-card]="link.linkType === 'INTERNAL_ROUTE' || link.title.toUpperCase().includes('NEW APPLICATION')"
-                (click)="handleLinkClick(link)"
-                role="button"
-                tabindex="0"
-              >
-                <div class="card-icon-col">
-                  <div class="type-icon-badge" [ngClass]="link.linkType">
-                    <span *ngIf="link.linkType === 'PDF_DOCUMENT'">📄</span>
-                    <span *ngIf="link.linkType === 'EXTERNAL_URL'">🌐</span>
-                    <span *ngIf="link.linkType === 'INTERNAL_ROUTE'">✨</span>
-                  </div>
-                </div>
-                <div class="card-body-col">
-                  <div class="card-top-tags">
-                    <span class="tag-type-pill">{{ link.linkType.replace('_', ' ') }}</span>
-                    <span *ngIf="link.openInNewTab" class="tag-ext-pill">EXTERNAL</span>
-                  </div>
-                  <h4 class="resource-title">{{ link.title }}</h4>
-                  <p class="resource-desc">{{ link.description || 'Click to view official document and details.' }}</p>
-                </div>
-                <div class="card-action-col">
-                  <span class="action-btn-circle" title="View details">→</span>
-                </div>
-              </div>
-            </div>
-
+      <!-- TAB 3: SCHOOLS MATRIX MASTER PAGE -->
+      <section *ngIf="adminTab === 'schools'" class="admin-table-section">
+        <div class="section-action-header">
+          <div class="section-title-wrap">
+            <h3 class="admin-section-heading">Capital Area Indian Schools Matrix</h3>
+            <p class="admin-section-sub">Campuses, curricula, class ranges, locations, and official websites.</p>
           </div>
-
-          <!-- VIEW B: ADVANCED GUIDELINES & SCHOOL MATRIX -->
-          <div *ngIf="currentView === 'guidelines'" class="view-card-wrapper fade-in">
-            
-            <div class="guidelines-card-header">
-              <button class="btn-back-link" (click)="goToLinks()">
-                ← Back to Circulars & Portal Home
-              </button>
-              <div class="step-progress-banner">
-                <div class="step-bullet active">1. Guidelines</div>
-                <div class="step-line active"></div>
-                <div class="step-bullet active">2. Eligibility Check</div>
-                <div class="step-line"></div>
-                <div class="step-bullet">3. Application Wizard</div>
-              </div>
-            </div>
-
-            <!-- Prominent Notice Banner -->
-            <div class="guidelines-hero-alert">
-              <div class="alert-icon-wrap">📢</div>
-              <div class="alert-content-wrap">
-                <h3 class="alert-heading">Guidelines for Online Registration (Academic Year {{ contact.academicYear }})</h3>
-                <p>Online registration for admissions to classes <strong>KG I to Class IX</strong> is open in Indian Schools in the capital area. Please carefully review the syllabus breakdown and instructions below before proceeding.</p>
-              </div>
-            </div>
-
-            <!-- Filterable School Matrix -->
-            <div class="school-matrix-container">
-              <div class="matrix-top-bar">
-                <div class="matrix-title-group">
-                  <h4 class="matrix-title">Capital Area Indian Schools & Curriculum</h4>
-                  <span class="matrix-subtitle">Select syllabus to filter school choices</span>
-                </div>
-                <div class="syllabus-tabs">
-                  <button class="s-tab-btn" [class.active]="schoolFilter === 'ALL'" (click)="schoolFilter = 'ALL'">All ({{ schools.length }})</button>
-                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CBSE'" (click)="schoolFilter = 'CBSE'">CBSE</button>
-                  <button class="s-tab-btn" [class.active]="schoolFilter === 'CAMBRIDGE'" (click)="schoolFilter = 'CAMBRIDGE'">Cambridge</button>
-                </div>
-              </div>
-
-              <div class="matrix-table-card">
-                <table class="advanced-schools-table">
-                  <thead>
-                    <tr>
-                      <th style="width: 50px;">#</th>
-                      <th>School Name & Location</th>
-                      <th style="width: 130px;">Curriculum</th>
-                      <th style="width: 160px;">Eligible Classes</th>
-                      <th style="width: 90px;">Website</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let s of filteredSchools">
-                      <td class="num-col font-bold">{{ s.slNo }}</td>
-                      <td>
-                        <div class="school-name-cell">
-                          <span class="s-name">{{ s.name }}</span>
-                          <span class="s-loc">📍 {{ s.location }} • Code: {{ s.code }}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="curriculum-badge" [class.cambridge-badge]="s.syllabus.toUpperCase() === 'CAMBRIDGE'">
-                          {{ s.syllabus }}
-                        </span>
-                      </td>
-                      <td class="classes-cell">{{ s.classes }}</td>
-                      <td>
-                        <a [href]="s.website" target="_blank" class="s-link-btn" title="Visit School Website">Visit ↗</a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Numbered Instructions Accordion/List -->
-            <div class="instructions-card-section">
-              <h4 class="section-subheading">Important Instructions for Parents & Applicants</h4>
-              <div class="instruction-cards-list">
-                <div *ngFor="let item of guidelines" class="instruction-item-card">
-                  <div class="inst-num-badge">{{ item.id }}</div>
-                  <div class="inst-content">
-                    <strong class="inst-title">{{ item.title }}:</strong>
-                    <span class="inst-text">{{ item.detail }}</span>
-                    <span *ngIf="item.link" class="inst-link-block">
-                      <a [href]="item.link" target="_blank" class="external-guideline-link">{{ item.linkText }} ↗</a>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Interactive Eligibility Verification Card -->
-            <div class="eligibility-action-card">
-              <div class="eligibility-header">
-                <span class="shield-icon">🛡️</span>
-                <div>
-                  <h4 class="eligibility-title">Passport Verification & Confirmation</h4>
-                  <p class="eligibility-subtitle">Confirm student eligibility to unlock registration</p>
-                </div>
-              </div>
-
-              <div class="passport-toggle-box">
-                <span class="passport-q-text">Does the applicant child possess a valid Indian Passport?</span>
-                <div class="modern-radio-switch">
-                  <button 
-                    type="button" 
-                    class="radio-btn" 
-                    [class.active]="hasIndianPassport === true" 
-                    (click)="hasIndianPassport = true"
-                  >
-                    ✓ Yes, Indian Passport
-                  </button>
-                  <button 
-                    type="button" 
-                    class="radio-btn danger" 
-                    [class.active]="hasIndianPassport === false" 
-                    (click)="hasIndianPassport = false"
-                  >
-                    ✕ No (Other Nationality)
-                  </button>
-                </div>
-              </div>
-
-              <!-- Warning for non-Indian passport -->
-              <div *ngIf="!hasIndianPassport" class="non-indian-alert">
-                <span class="alert-icon">⚠️</span>
-                <div class="alert-msg">
-                  <strong>Non-Indian Passport Holder:</strong> Admissions for other nationalities are processed via the external quota system. Please fill the 
-                  <a href="https://forms.gle/hEUAnuLePfyTveD89" target="_blank" class="alert-link">Admission to Other Nationalities Application Form ↗</a>.
-                </div>
-              </div>
-
-              <!-- Guidelines acknowledgement checkbox -->
-              <label class="terms-confirm-label">
-                <input type="checkbox" [(ngModel)]="hasConfirmedGuidelines" />
-                <span>I have read, understood, and agree to all the guidelines and eligibility criteria specified above.</span>
-              </label>
-
-              <!-- Final Launch Button -->
-              <div class="launch-action-bar">
-                <button 
-                  type="button" 
-                  class="btn-launch-registration"
-                  [disabled]="!hasIndianPassport || !hasConfirmedGuidelines"
-                  (click)="startRegistration()"
-                >
-                  <span>Continue to Online Registration Wizard</span>
-                  <span class="launch-arrow">➔</span>
-                </button>
-              </div>
-            </div>
-
+          <div class="section-header-right-actions">
+            <span class="count-pill">{{ adminFilteredSchools.length }} Campuses</span>
+            <button class="btn-primary-admin" (click)="openAddSchool()">+ Add New School</button>
           </div>
-
         </div>
 
-        <!-- ================= RIGHT COLUMN (LOGIN / TRACKER) ================= -->
-        <div class="dashboard-side-col">
+        <!-- Filter and Search Bar -->
+        <div class="admin-filter-bar">
+          <div class="filter-search-box">
+            <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input 
+              type="text" 
+              [(ngModel)]="schoolSearchTerm" 
+              placeholder="Search school name, code (ISM, ISG...), syllabus, or location..."
+              class="search-input"
+            />
+            <button *ngIf="schoolSearchTerm" class="search-clear-btn" (click)="schoolSearchTerm = ''">✕</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-crud-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">Sl</th>
+                <th>School Campus Name</th>
+                <th style="width: 80px;">Code</th>
+                <th style="width: 120px;">Syllabus</th>
+                <th style="width: 140px;">Classes</th>
+                <th>Location</th>
+                <th>Website</th>
+                <th style="width: 110px;">Status</th>
+                <th class="actions-header" style="width: 180px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of adminFilteredSchools" [class.inactive-row]="!s.isActive">
+                <td class="order-cell">{{ s.slNo }}</td>
+                <td><strong>{{ s.name }}</strong></td>
+                <td><span class="code-pill">{{ s.code }}</span></td>
+                <td>
+                  <span class="curriculum-badge" [class.cambridge-badge]="s.syllabus.toUpperCase() === 'CAMBRIDGE'">
+                    {{ s.syllabus }}
+                  </span>
+                </td>
+                <td>{{ s.classes }}</td>
+                <td>{{ s.location }}</td>
+                <td>
+                  <a *ngIf="s.website" [href]="s.website" target="_blank" class="table-link-preview">Visit ↗</a>
+                </td>
+                <td>
+                  <span class="status-badge" [class.badge-active]="s.isActive" [class.badge-inactive]="!s.isActive">
+                    {{ s.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-btn-group">
+                    <button class="btn-action-icon edit" (click)="openEditSchool(s)" title="Edit">✏️</button>
+                    <button class="btn-action-icon toggle" (click)="toggleSchool(s)" [title]="s.isActive ? 'Deactivate' : 'Activate'">
+                      {{ s.isActive ? '⏸️' : '▶️' }}
+                    </button>
+                    <button class="btn-action-icon delete" (click)="deleteSchool(s)" title="Soft Delete">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="adminFilteredSchools.length === 0">
+                <td colspan="9" class="text-center py-5 text-muted">
+                  No schools found matching "<strong>{{ schoolSearchTerm }}</strong>".
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: PORTAL LINKS MASTER PAGE -->
+      <section *ngIf="adminTab === 'links'" class="admin-table-section">
+        <div class="section-action-header">
+          <div class="section-title-wrap">
+            <h3 class="admin-section-heading">Portal Links, Circulars & Documents</h3>
+            <p class="admin-section-sub">Dynamic cards rendered on the Admission Portal homepage.</p>
+          </div>
+          <div class="section-header-right-actions">
+            <span class="count-pill">{{ adminFilteredLinks.length }} Links</span>
+            <button class="btn-primary-admin" (click)="openAddLink()">+ Add New Link / Circular</button>
+          </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="admin-filter-bar">
+          <div class="filter-search-box">
+            <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input 
+              type="text" 
+              [(ngModel)]="linkSearchTerm" 
+              placeholder="Search links by title, section (Forms, Circulars), or target URL..."
+              class="search-input"
+            />
+            <button *ngIf="linkSearchTerm" class="search-clear-btn" (click)="linkSearchTerm = ''">✕</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-crud-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">Order</th>
+                <th>Title</th>
+                <th style="width: 140px;">Section</th>
+                <th style="width: 140px;">Type</th>
+                <th>Target URL / File</th>
+                <th style="width: 110px;">Status</th>
+                <th class="actions-header" style="width: 180px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let l of adminFilteredLinks" [class.inactive-row]="!l.isActive">
+                <td class="order-cell">{{ l.displayOrder }}</td>
+                <td>
+                  <strong>{{ l.title }}</strong>
+                  <div *ngIf="l.description" class="sub-meta">{{ l.description }}</div>
+                </td>
+                <td><span class="section-pill">{{ l.section }}</span></td>
+                <td><span class="type-pill">{{ l.linkType }}</span></td>
+                <td class="url-cell" title="{{ l.targetUrl }}">{{ l.targetUrl }}</td>
+                <td>
+                  <span class="status-badge" [class.badge-active]="l.isActive" [class.badge-inactive]="!l.isActive">
+                    {{ l.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-btn-group">
+                    <button class="btn-action-icon edit" (click)="openEditLink(l)" title="Edit">✏️</button>
+                    <button class="btn-action-icon toggle" (click)="toggleLink(l)" [title]="l.isActive ? 'Deactivate' : 'Activate'">
+                      {{ l.isActive ? '⏸️' : '▶️' }}
+                    </button>
+                    <button class="btn-action-icon delete" (click)="deleteLink(l)" title="Soft Delete">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="adminFilteredLinks.length === 0">
+                <td colspan="7" class="text-center py-5 text-muted">
+                  No links found matching "<strong>{{ linkSearchTerm }}</strong>".
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: PORTAL CONFIGURATIONS & ASSETS PAGE -->
+      <section *ngIf="adminTab === 'configs'" class="admin-table-section">
+        <div class="section-action-header">
+          <div class="section-title-wrap">
+            <h3 class="admin-section-heading">System Configurations & Helpline Details</h3>
+            <p class="admin-section-sub">Dynamic contact numbers, office timings, academic year, fees, and branding assets.</p>
+          </div>
+          <div class="section-header-right-actions">
+            <span class="count-pill">{{ adminFilteredConfigs.length }} Settings</span>
+          </div>
+        </div>
+
+        <!-- Portal Logo & Identity Card -->
+        <div class="admin-branding-card">
+          <div class="branding-logo-preview">
+            <img [src]="logoUrl" [alt]="brandTitle" class="branding-preview-img" />
+          </div>
+          <div class="branding-info">
+            <h4 class="branding-title">Portal Logo & Identity (Stored in DB)</h4>
+            <p class="text-muted branding-desc">The active logo is dynamically stored and loaded from <code>PortalConfigsMaster (PortalLogoUrl)</code>. You can upload a new logo to instantly update it in the database and live portal.</p>
+            <div class="branding-actions">
+              <label class="btn-upload-logo" [class.disabled]="isUploadingLogo">
+                <span>{{ isUploadingLogo ? '⏳ Uploading...' : '📁 Upload New Logo' }}</span>
+                <input type="file" (change)="onLogoFileSelected($event)" accept="image/*" [disabled]="isUploadingLogo" style="display: none;" />
+              </label>
+              <span class="branding-current-path">Active DB Path: <code>{{ contact.logoUrl || 'assets/logo.png' }}</code></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="admin-filter-bar">
+          <div class="filter-search-box">
+            <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input 
+              type="text" 
+              [(ngModel)]="configSearchTerm" 
+              placeholder="Search configuration keys, values, or descriptions..."
+              class="search-input"
+            />
+            <button *ngIf="configSearchTerm" class="search-clear-btn" (click)="configSearchTerm = ''">✕</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-crud-table">
+            <thead>
+              <tr>
+                <th style="width: 180px;">Configuration Key</th>
+                <th>Current Value</th>
+                <th>Description</th>
+                <th style="width: 120px;">Section</th>
+                <th class="actions-header" style="width: 130px;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of adminFilteredConfigs">
+                <td><code class="config-key-pill">{{ c.configKey }}</code></td>
+                <td>
+                  <div *ngIf="editingConfigKey === c.configKey" class="config-inline-edit">
+                    <input type="text" [(ngModel)]="configForm.configValue" class="form-control-sm" />
+                  </div>
+                  <div *ngIf="editingConfigKey !== c.configKey">
+                    <strong class="config-val-text">{{ c.configValue }}</strong>
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="editingConfigKey === c.configKey">
+                    <input type="text" [(ngModel)]="configForm.description" class="form-control-sm" />
+                  </div>
+                  <div *ngIf="editingConfigKey !== c.configKey">
+                    <span class="text-muted">{{ c.description || '—' }}</span>
+                  </div>
+                </td>
+                <td><span class="section-pill">{{ c.section }}</span></td>
+                <td>
+                  <div *ngIf="editingConfigKey === c.configKey" class="action-btn-group">
+                    <button class="btn-sm btn-save" (click)="saveConfig(c.configKey)">Save</button>
+                    <button class="btn-sm btn-cancel" (click)="cancelEditConfig()">✕</button>
+                  </div>
+                  <div *ngIf="editingConfigKey !== c.configKey">
+                    <button class="btn-action-icon edit" (click)="openEditConfig(c)" title="Edit Value">✏️ Edit</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="adminFilteredConfigs.length === 0">
+                <td colspan="5" class="text-center py-5 text-muted">
+                  No configuration settings found matching "<strong>{{ configSearchTerm }}</strong>".
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 6: SYSTEM ACCOUNTS & SECURITY PAGE -->
+      <section *ngIf="adminTab === 'users'" class="admin-table-section">
+        <div class="section-action-header">
+          <div class="section-title-wrap">
+            <h3 class="admin-section-heading">System Users & Authentication Accounts</h3>
+            <p class="admin-section-sub">List of all system accounts (Administrators & Client Applicants).</p>
+          </div>
+          <div class="section-header-right-actions">
+            <span class="count-pill">{{ adminFilteredUsers.length }} Accounts</span>
+          </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="admin-filter-bar">
+          <div class="filter-search-box">
+            <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input 
+              type="text" 
+              [(ngModel)]="userSearchTerm" 
+              placeholder="Search user accounts by username, name, email, or role..."
+              class="search-input"
+            />
+            <button *ngIf="userSearchTerm" class="search-clear-btn" (click)="userSearchTerm = ''">✕</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-crud-table">
+            <thead>
+              <tr>
+                <th>Username / Reg No</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th class="actions-header">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of adminFilteredUsers">
+                <td><code>{{ u.username }}</code></td>
+                <td><strong>{{ u.fullName }}</strong></td>
+                <td>{{ u.email || '—' }}</td>
+                <td>{{ u.phoneNumber || '—' }}</td>
+                <td>
+                  <span class="role-badge" [class.admin]="u.role === 'ADMIN'" [class.client]="u.role === 'CLIENT'">
+                    {{ u.role }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge" [class.badge-active]="u.isActive" [class.badge-inactive]="!u.isActive">
+                    {{ u.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-sm btn-toggle-user" (click)="toggleUser(u)">
+                    {{ u.isActive ? 'Deactivate' : 'Activate' }}
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="adminFilteredUsers.length === 0">
+                <td colspan="7" class="text-center py-5 text-muted">
+                  No accounts found matching "<strong>{{ userSearchTerm }}</strong>".
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= CLIENT / APPLICANT DASHBOARD ================= -->
+  <main *ngIf="currentView === 'client' && currentUser?.role === 'CLIENT'" class="advanced-portal-root fade-in adv-page-with-bar">
+    <div class="adv-page-inner">
+      
+      <!-- Client Header Banner -->
+      <div class="client-hero-card">
+        <div class="client-hero-left">
+          <span class="client-chip">APPLICANT PORTAL • ACADEMIC YEAR 2026–2027</span>
+          <h2 class="client-title">Application Status & Details</h2>
+          <p class="client-desc">Welcome, <strong>{{ currentUser?.fullName }}</strong>. Track your child's registration status, review school choices, and download your submission summary.</p>
+        </div>
+        <div class="client-hero-right">
+          <button class="btn-print-dossier" (click)="printClientApplication()">🖨️ Print Application</button>
+          <button class="btn-logout-alt" (click)="onLogout()">Sign Out 🚪</button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoadingClient" class="state-loading-box">
+        <div class="pulsing-loader"></div>
+        <span>Retrieving your application dossier...</span>
+      </div>
+
+      <!-- Application Details Card -->
+      <div *ngIf="!isLoadingClient && clientApplication" class="client-dossier-grid">
+        
+        <!-- Status Timeline Card -->
+        <div class="dossier-card status-timeline-card">
+          <div class="dossier-card-header">
+            <span class="dossier-icon">📌</span>
+            <h4>Application Live Status</h4>
+            <span class="status-pill-lg" [ngClass]="clientApplication.status?.toLowerCase()">
+              {{ clientApplication.status }}
+            </span>
+          </div>
+          <div class="dossier-card-body">
+            <div class="app-summary-bar">
+              <div class="summary-item">
+                <span class="lbl">Registration Number:</span>
+                <strong class="val highlight">{{ clientApplication.registrationNo }}</strong>
+              </div>
+              <div class="summary-item">
+                <span class="lbl">Submission Date:</span>
+                <strong class="val">{{ clientApplication.submittedAt || clientApplication.createdAt | date:'dd MMMM yyyy, HH:mm' }}</strong>
+              </div>
+            </div>
+
+            <!-- Visual Step Timeline -->
+            <div class="workflow-timeline">
+              <div class="timeline-step completed">
+                <div class="circle">✓</div>
+                <span>Submitted</span>
+              </div>
+              <div class="timeline-step" [class.completed]="clientApplication.status === 'UNDER_VERIFICATION' || clientApplication.status === 'APPROVED' || clientApplication.status === 'SEAT_ALLOTTED'" [class.active]="clientApplication.status === 'SUBMITTED'">
+                <div class="circle">2</div>
+                <span>Document Verification</span>
+              </div>
+              <div class="timeline-step" [class.completed]="clientApplication.status === 'APPROVED' || clientApplication.status === 'SEAT_ALLOTTED'" [class.active]="clientApplication.status === 'UNDER_VERIFICATION'">
+                <div class="circle">3</div>
+                <span>Seat Allotment & Review</span>
+              </div>
+              <div class="timeline-step" [class.completed]="clientApplication.status === 'APPROVED' || clientApplication.status === 'SEAT_ALLOTTED'">
+                <div class="circle">4</div>
+                <span>Admission Confirmed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student & Parent Information Cards Grid -->
+        <div class="dossier-info-columns">
           
-          <!-- Unified Auth Card with Tabs -->
-          <div class="auth-unified-card">
-            
-            <!-- Auth Card Tabs -->
-            <div class="auth-tabs-header">
-              <button 
-                class="auth-tab" 
-                [class.active]="activeAuthTab === 'login'" 
-                (click)="activeAuthTab = 'login'"
-              >
-                🔐 Applicant Login
-              </button>
-              <button 
-                class="auth-tab" 
-                [class.active]="activeAuthTab === 'track'" 
-                (click)="activeAuthTab = 'track'"
-              >
-                🔍 Track Status
-              </button>
+          <!-- Student Card -->
+          <div class="dossier-card">
+            <div class="dossier-card-header">
+              <span class="dossier-icon">🧒</span>
+              <h4>Student / Pupil Information</h4>
             </div>
-
-            <!-- TAB 1: LOGIN -->
-            <div *ngIf="activeAuthTab === 'login'" class="auth-tab-body fade-in">
-              <p class="auth-prompt-text">Access your submitted application & documents</p>
-
-              <form (ngSubmit)="onLogin()" class="auth-form">
-                
-                <div class="form-field-group">
-                  <label for="username">Registration No. / Username</label>
-                  <div class="input-with-icon">
-                    <span class="field-icon">👤</span>
-                    <input 
-                      type="text" 
-                      id="username" 
-                      name="username" 
-                      [(ngModel)]="loginUsername" 
-                      placeholder="e.g. 2026-IS-00891" 
-                      required 
-                    />
-                  </div>
-                  <small class="field-help">Parents can use their generated Registration No.</small>
-                </div>
-
-                <div class="form-field-group">
-                  <div class="label-with-action">
-                    <label for="password">Password</label>
-                    <a href="javascript:void(0)" (click)="showPassword = !showPassword" class="toggle-pass">
-                      {{ showPassword ? 'Hide' : 'Show' }}
-                    </a>
-                  </div>
-                  <div class="input-with-icon">
-                    <span class="field-icon">🔒</span>
-                    <input 
-                      [type]="showPassword ? 'text' : 'password'" 
-                      id="password" 
-                      name="password" 
-                      [(ngModel)]="loginPassword" 
-                      placeholder="Enter account password" 
-                      required 
-                    />
-                  </div>
-                </div>
-
-                <!-- Dynamic Security Captcha -->
-                <div class="form-field-group">
-                  <label>Security Code</label>
-                  <div class="captcha-styled-row">
-                    <div class="captcha-art-box" (click)="generateCaptcha()" title="Click to regenerate new captcha">
-                      <span class="captcha-digits">{{ captchaCode }}</span>
-                      <span class="captcha-refresh-btn" title="Refresh code">🔄</span>
-                    </div>
-                    <input 
-                      type="text" 
-                      name="captcha" 
-                      [(ngModel)]="captchaInput" 
-                      placeholder="Enter code" 
-                      class="captcha-entry-input" 
-                      maxlength="6"
-                      required 
-                    />
-                  </div>
-                </div>
-
-                <!-- Messages -->
-                <div *ngIf="loginErrorMessage" class="auth-error-alert">
-                  {{ loginErrorMessage }}
-                </div>
-                <div *ngIf="loginSuccessMessage" class="auth-success-alert">
-                  {{ loginSuccessMessage }}
-                </div>
-
-                <button type="submit" class="btn-auth-submit">
-                  <span>Sign In</span>
-                  <span class="btn-glow-arrow">▶</span>
-                </button>
-
-                <div class="auth-footer-links">
-                  <a href="javascript:void(0)" (click)="loginErrorMessage = 'Please contact the school admission office with your child\'s passport number for password recovery.'" class="forgot-pass-btn">
-                    Forgot your password?
-                  </a>
-                </div>
-              </form>
+            <div class="dossier-card-body">
+              <table class="dossier-table">
+                <tr><td>Full Name:</td><td><strong>{{ clientApplication.student?.givenName }} {{ clientApplication.student?.surname }}</strong></td></tr>
+                <tr><td>Admission Class:</td><td><span class="class-badge">{{ clientApplication.student?.admissionClass }}</span></td></tr>
+                <tr><td>Passport Number:</td><td><code>{{ clientApplication.student?.passportNumber }}</code></td></tr>
+                <tr><td>Date of Birth:</td><td>{{ clientApplication.student?.dateOfBirth | date:'dd/MM/yyyy' }}</td></tr>
+                <tr><td>Gender / Nationality:</td><td>{{ clientApplication.student?.gender }} • {{ clientApplication.student?.nationality }}</td></tr>
+                <tr><td>Mother Tongue:</td><td>{{ clientApplication.student?.motherTongue }}</td></tr>
+              </table>
             </div>
-
-            <!-- TAB 2: TRACK APPLICATION -->
-            <div *ngIf="activeAuthTab === 'track'" class="auth-tab-body fade-in">
-              <p class="auth-prompt-text">Check your admission processing status</p>
-              
-              <form (ngSubmit)="onTrackStatus()" class="auth-form">
-                <div class="form-field-group">
-                  <label for="trackReg">Registration Reference No.</label>
-                  <div class="input-with-icon">
-                    <span class="field-icon">📄</span>
-                    <input 
-                      type="text" 
-                      id="trackReg" 
-                      name="trackReg" 
-                      [(ngModel)]="trackRegNo" 
-                      placeholder="e.g. 2026-IS-00891" 
-                      required 
-                    />
-                  </div>
-                </div>
-
-                <div class="form-field-group">
-                  <label for="trackMob">Registered Mobile No.</label>
-                  <div class="input-with-icon">
-                    <span class="field-icon">📱</span>
-                    <input 
-                      type="text" 
-                      id="trackMob" 
-                      name="trackMob" 
-                      [(ngModel)]="trackMobile" 
-                      placeholder="e.g. 96891234567" 
-                      required 
-                    />
-                  </div>
-                </div>
-
-                <div *ngIf="trackStatusResult" class="track-result-box">
-                  {{ trackStatusResult }}
-                </div>
-
-                <button type="submit" class="btn-auth-submit">
-                  <span>Check Status</span>
-                  <span class="btn-glow-arrow">🔍</span>
-                </button>
-              </form>
-            </div>
-
           </div>
 
-          <!-- Quick Helpline & Assistance Widget -->
-          <div class="support-card-widget">
-            <div class="support-header">
-              <span class="support-icon">💡</span>
-              <h4>Admission Helpdesk</h4>
+          <!-- Parent Card -->
+          <div class="dossier-card">
+            <div class="dossier-card-header">
+              <span class="dossier-icon">👨‍👩‍👧</span>
+              <h4>Parent / Guardian Details</h4>
             </div>
-            <p class="support-desc">For technical queries regarding online registration, portal access, or syllabus questions:</p>
-            <div class="support-contacts">
-              <div class="contact-entry">
-                <span class="c-label">Phone:</span>
-                <span class="c-val">{{ contact.helplinePhone }}</span>
-              </div>
-              <div class="contact-entry">
-                <span class="c-label">Email:</span>
-                <span class="c-val">{{ contact.helplineEmail }}</span>
-              </div>
-              <div class="contact-entry">
-                <span class="c-label">Hours:</span>
-                <span class="c-val">{{ contact.officeHours }}</span>
+            <div class="dossier-card-body">
+              <table class="dossier-table">
+                <tr><td>Parent Name:</td><td><strong>{{ clientApplication.parent?.givenName }} {{ clientApplication.parent?.surname }}</strong></td></tr>
+                <tr><td>Relationship:</td><td>{{ clientApplication.parent?.relationship }}</td></tr>
+                <tr><td>Civil ID / Resident Card:</td><td><code>{{ clientApplication.parent?.civilId }}</code></td></tr>
+                <tr><td>Registered Mobile:</td><td>📱 {{ clientApplication.parent?.mobileNo }}</td></tr>
+                <tr><td>Email Address:</td><td>✉️ {{ clientApplication.parent?.email }}</td></tr>
+                <tr><td>Employer / Occupation:</td><td>{{ clientApplication.parent?.employer }} ({{ clientApplication.parent?.occupation }})</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <!-- School Preferences Card -->
+          <div class="dossier-card full-width-card">
+            <div class="dossier-card-header">
+              <span class="dossier-icon">🏫</span>
+              <h4>Selected School Campus Preferences</h4>
+            </div>
+            <div class="dossier-card-body">
+              <div class="client-prefs-list">
+                <div *ngFor="let p of getApplicantPreferences(clientApplication)" class="pref-pill-box">
+                  <span class="pref-order">Preference #{{ p.order }}</span>
+                  <span class="pref-name">{{ p.name }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -507,57 +1321,470 @@
     </div>
   </main>
 
-  <!-- Modern Multi-Section Footer -->
-  <footer *ngIf="currentView !== 'wizard'" class="portal-footer-section">
-    <div class="footer-inner">
-      <div class="footer-nav-links">
-        <ng-container *ngFor="let fLink of footerLinks; let last = last">
-          <a href="javascript:void(0)" (click)="handleLinkClick(fLink)">{{ fLink.title }}</a>
-          <span class="footer-bullet" *ngIf="!last">•</span>
-        </ng-container>
-      </div>
-      <div class="footer-legal-bar">
-        <span>© Board of Directors Indian Schools, Sultanate of Oman. All Rights Reserved.</span>
-        <span class="portal-ver">Admission Management System v3.2</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Advanced PDF & Document Viewer Modal -->
-  <div *ngIf="isPdfModalOpen" class="pdf-viewer-backdrop fade-in" (click)="closePdfModal()">
-    <div class="pdf-viewer-container" (click)="$event.stopPropagation()">
-      <div class="pdf-viewer-header">
-        <div class="pdf-header-title">
-          <span class="doc-icon-badge">📄</span>
-          <div>
-            <h3>{{ activeDoc?.title }}</h3>
-            <span class="doc-subtitle">{{ activeDoc?.description || 'Official Board Circular' }}</span>
+  <!-- ================= PUBLIC ADVANCED PORTAL VIEW ================= -->
+  <main *ngIf="currentView === 'links'" class="advanced-portal-root fade-in">
+    
+    <!-- Immersive Hero Background & Overlay -->
+    <div class="advanced-hero-section">
+      <div class="advanced-hero-bg"></div>
+      <div class="advanced-hero-overlay"></div>
+      
+      <!-- Top Navigation & Brand -->
+      <nav class="advanced-navbar">
+        <div class="nav-container">
+          <div class="nav-brand">
+            <img [src]="logoUrl" [alt]="brandTitle" class="nav-logo-img" />
+            <div class="brand-text-stack">
+              <span class="brand-main">{{ brandTitle }}</span>
+              <span class="brand-sub">{{ brandSubTitle }}</span>
+            </div>
+          </div>
+          <div class="nav-actions">
+            <a *ngFor="let f of footerLinks" href="javascript:void(0)" (click)="handleLinkClick(f)" class="nav-link-modern">
+              {{ f.title }}
+            </a>
           </div>
         </div>
-        <div class="pdf-header-controls">
-          <button class="btn-ctrl-action" (click)="openDocInNewTab()" title="Open document in new tab">
-            ↗ Full Screen / New Tab
+      </nav>
+
+      <div class="advanced-hero-content-wrapper">
+        <!-- Left: Hero Messaging & Action Grid -->
+        <div class="advanced-hero-left">
+          <div class="hero-badge-pill">Admissions Open 2026–2027</div>
+          <h1 class="hero-title-massive">Shape Your Child's Future with Us.</h1>
+          <p class="hero-subtitle-modern">Experience a seamless, unified admission process for Indian Schools in the Sultanate of Oman. Secure, transparent, and completely digital.</p>
+          
+          <div *ngIf="isLoadingData" class="advanced-loader">
+            <div class="spinner-ring"></div>
+            <span>Syncing portal data...</span>
+          </div>
+
+          <!-- Modern Bento Grid for Links -->
+          <div class="advanced-bento-grid">
+            <ng-container *ngFor="let link of admissionLinks">
+              <div 
+                class="bento-card" 
+                [class.bento-primary]="link.title.toUpperCase().includes('NEW APPLICATION')"
+                (click)="handleLinkClick(link)"
+              >
+                <div class="bento-icon">{{ link.title.toUpperCase().includes('NEW') ? '🚀' : '📄' }}</div>
+                <div class="bento-text">{{ link.title }}</div>
+                <div class="bento-arrow">→</div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Right: Glassmorphic Floating Login -->
+        <div class="advanced-hero-right">
+          <div class="glass-login-card">
+            <div class="glass-login-header">
+              <h3>Welcome Back</h3>
+              <p>Sign in to your applicant dashboard.</p>
+            </div>
+
+            <form (ngSubmit)="onLogin()" class="advanced-login-form">
+              
+              <div class="modern-input-group">
+                <label for="adv-username">Registration No / Admin ID</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">👤</span>
+                  <input 
+                    type="text" 
+                    id="adv-username" 
+                    name="username" 
+                    [(ngModel)]="loginUsername" 
+                    placeholder="Enter your ID..."
+                    autocomplete="username"
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div class="modern-input-group">
+                <label for="adv-password">Password</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">🔒</span>
+                  <input 
+                    type="password" 
+                    id="adv-password" 
+                    name="password" 
+                    [(ngModel)]="loginPassword" 
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div class="modern-captcha-group">
+                <label>Security Verification</label>
+                <div class="captcha-flex-row">
+                  <div class="modern-captcha-badge" (click)="generateCaptcha()" title="Refresh">
+                    {{ captchaCode }}
+                  </div>
+                  <input 
+                    type="text" 
+                    name="captcha" 
+                    [(ngModel)]="captchaInput" 
+                    placeholder="Enter Code" 
+                    maxlength="6" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <!-- Alerts -->
+              <div *ngIf="loginErrorMessage" class="modern-alert alert-danger fade-in">
+                <span class="alert-icon">⚠️</span> {{ loginErrorMessage }}
+              </div>
+              <div *ngIf="loginSuccessMessage" class="modern-alert alert-success fade-in">
+                <span class="alert-icon">✅</span> {{ loginSuccessMessage }}
+              </div>
+
+              <!-- Actions -->
+              <div class="login-action-row">
+                <a href="javascript:void(0)" (click)="forgotPasswordHint()" class="glass-forgot-link">Forgot password?</a>
+                <button type="submit" class="btn-glass-submit" [disabled]="isLoggingIn">
+                  {{ isLoggingIn ? 'Authenticating...' : 'Sign In →' }}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer Copyright at bottom of Hero -->
+      <div class="advanced-hero-footer">
+        <p>(C) Board of Directors Indian Schools, Sultanate of Oman. All Rights Reserved.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= GUIDELINES & PARTICIPATING SCHOOLS VIEW ================= -->
+  <main *ngIf="currentView === 'guidelines'" class="advanced-portal-root fade-in">
+    <div class="advanced-hero-section guidelines-page">
+      <div class="advanced-hero-bg"></div>
+      <div class="advanced-hero-overlay"></div>
+
+      <!-- Same Navbar as Home -->
+      <nav class="advanced-navbar">
+        <div class="nav-container">
+          <div class="nav-brand">
+            <img [src]="logoUrl" [alt]="brandTitle" class="nav-logo-img" />
+            <div class="brand-text-stack">
+              <span class="brand-main">{{ brandTitle }}</span>
+              <span class="brand-sub">{{ brandSubTitle }}</span>
+            </div>
+          </div>
+          <div class="nav-actions">
+            <a *ngFor="let f of footerLinks" href="javascript:void(0)" (click)="handleLinkClick(f)" class="nav-link-modern">
+              {{ f.title }}
+            </a>
+            <button class="nav-link-btn" (click)="goToLinks()">← Back to Home</button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Guidelines Content -->
+      <div class="guidelines-content-wrapper">
+
+        <!-- Page Title -->
+        <div class="guidelines-page-hero">
+          <div class="hero-badge-pill">Admissions 2026–2027</div>
+          <h1 class="guidelines-page-title">Instructions &amp; Participating Schools</h1>
+          <p class="guidelines-page-sub">Please review the participating schools and mandatory guidelines carefully before beginning your application.</p>
+        </div>
+
+        <!-- Schools Section -->
+        <div class="glass-content-card">
+          <div class="glass-card-header">
+            <div>
+              <h3 class="glass-card-title">🏫 Participating Indian Schools — Capital Area</h3>
+            </div>
+            <div class="curriculum-pill-filters dark">
+              <button [class.active]="schoolFilter === 'ALL'" (click)="schoolFilter = 'ALL'">All Campuses</button>
+              <button [class.active]="schoolFilter === 'CBSE'" (click)="schoolFilter = 'CBSE'">CBSE</button>
+              <button [class.active]="schoolFilter === 'CAMBRIDGE'" (click)="schoolFilter = 'CAMBRIDGE'">Cambridge</button>
+            </div>
+          </div>
+
+          <div class="schools-dark-grid">
+            <div *ngFor="let s of filteredSchools" class="school-dark-card">
+              <div class="school-dark-card-top">
+                <div class="school-dark-initials">{{ s.code }}</div>
+                <span class="curriculum-badge-dark" [class.cambridge-badge-dark]="s.syllabus.toUpperCase() === 'CAMBRIDGE'">
+                  {{ s.syllabus }}
+                </span>
+              </div>
+              <div class="school-dark-name">{{ s.name }}</div>
+              <div class="school-dark-meta">📍 {{ s.location }}</div>
+              <div class="school-dark-classes">{{ s.classes }}</div>
+              <a [href]="s.website" target="_blank" class="school-dark-link">Visit Website ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guidelines Section -->
+        <div class="glass-content-card">
+          <div class="glass-card-header">
+            <h3 class="glass-card-title">📋 Important Instructions for Parents &amp; Applicants</h3>
+          </div>
+          <div class="guidelines-dark-list">
+            <div *ngFor="let item of guidelines; let i = index" class="guideline-dark-item">
+              <div class="guideline-num">{{ item.displayOrder || (i + 1) }}</div>
+              <div class="guideline-body">
+                <strong class="guideline-title">{{ item.title }}</strong>
+                <p class="guideline-detail">{{ item.detail }}</p>
+                <a *ngIf="item.link" [href]="item.link" target="_blank" class="guideline-ext-link">{{ item.linkText }} ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eligibility & Launch Section -->
+        <div class="glass-content-card eligibility-glass-card">
+          <div class="glass-card-header">
+            <h3 class="glass-card-title">🛡️ Passport Verification &amp; Eligibility</h3>
+          </div>
+
+          <div class="eligibility-dark-body">
+            <p class="eligibility-dark-question">Does the applicant child possess a valid Indian Passport?</p>
+            <div class="eligibility-dark-toggle">
+              <button 
+                type="button" 
+                class="dark-radio-btn" 
+                [class.active-yes]="hasIndianPassport === true" 
+                (click)="hasIndianPassport = true"
+              >✓ Yes, Indian Passport</button>
+              <button 
+                type="button" 
+                class="dark-radio-btn danger" 
+                [class.active-no]="hasIndianPassport === false" 
+                (click)="hasIndianPassport = false"
+              >✕ No (Other Nationality)</button>
+            </div>
+
+            <div *ngIf="hasIndianPassport === false" class="dark-warning-alert">
+              <span>⚠️</span>
+              <div>
+                <strong>Non-Indian Passport Holder:</strong> Admissions for other nationalities are processed via the external quota system. Please fill the
+                <a href="https://forms.gle/hEUAnuLePfyTveD89" target="_blank" class="dark-alert-link">Admission to Other Nationalities Application Form ↗</a>.
+              </div>
+            </div>
+
+            <label class="dark-confirm-label">
+              <input type="checkbox" [(ngModel)]="hasConfirmedGuidelines" />
+              <span>I have read, understood, and agree to all the guidelines and eligibility criteria specified above.</span>
+            </label>
+
+            <div class="launch-dark-bar">
+              <button 
+                type="button" 
+                class="btn-dark-launch"
+                [disabled]="!hasIndianPassport || !hasConfirmedGuidelines"
+                (click)="startRegistration()"
+              >
+                Continue to Registration Wizard →
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="advanced-hero-footer">
+        <p>(C) Board of Directors Indian Schools, Sultanate of Oman. All Rights Reserved.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= MASTER DATA CRUD MODALS (ADMIN ONLY) ================= -->
+
+  <!-- Guideline Modal -->
+  <div *ngIf="showGuidelineModal" class="modal-backdrop fade-in" (click)="showGuidelineModal = false">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditingGuideline ? 'Edit Guideline #' + guidelineForm.id : 'Add New Guideline' }}</h3>
+        <button class="btn-modal-close" (click)="showGuidelineModal = false">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>Title <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="guidelineForm.title" placeholder="e.g. Eligibility Criteria" class="form-control-modal" />
+        </div>
+        <div class="form-group-modal">
+          <label>Instruction Detail <span class="required">*</span></label>
+          <textarea [(ngModel)]="guidelineForm.detail" rows="4" placeholder="Enter the complete instruction text..." class="form-control-modal"></textarea>
+        </div>
+        <div class="form-row-modal">
+          <div class="form-group-modal">
+            <label>External Link (Optional)</label>
+            <input type="text" [(ngModel)]="guidelineForm.link" placeholder="https://..." class="form-control-modal" />
+          </div>
+          <div class="form-group-modal">
+            <label>Link Text</label>
+            <input type="text" [(ngModel)]="guidelineForm.linkText" placeholder="e.g. External Portal" class="form-control-modal" />
+          </div>
+        </div>
+        <div class="form-row-modal">
+          <div class="form-group-modal">
+            <label>Display Order</label>
+            <input type="number" [(ngModel)]="guidelineForm.displayOrder" class="form-control-modal" />
+          </div>
+          <div class="form-group-modal checkbox-align">
+            <label class="modal-checkbox-label">
+              <input type="checkbox" [(ngModel)]="guidelineForm.isActive" />
+              <span>Is Active (Visible on portal)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" (click)="showGuidelineModal = false">Cancel</button>
+        <button class="btn-modal-save" (click)="saveGuideline()">Save Guideline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- School Modal -->
+  <div *ngIf="showSchoolModal" class="modal-backdrop fade-in" (click)="showSchoolModal = false">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditingSchool ? 'Edit School #' + schoolForm.id : 'Add New Indian School' }}</h3>
+        <button class="btn-modal-close" (click)="showSchoolModal = false">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>School Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="schoolForm.name" placeholder="e.g. Indian School Muscat" class="form-control-modal" />
+        </div>
+        <div class="form-row-modal">
+          <div class="form-group-modal">
+            <label>Code <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="schoolForm.code" placeholder="e.g. ISM" class="form-control-modal" />
+          </div>
+          <div class="form-group-modal">
+            <label>Syllabus</label>
+            <select [(ngModel)]="schoolForm.syllabus" class="form-control-modal">
+              <option value="CBSE">CBSE</option>
+              <option value="CAMBRIDGE">CAMBRIDGE</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-modal">
+          <div class="form-group-modal">
+            <label>Classes Offered</label>
+            <input type="text" [(ngModel)]="schoolForm.classes" placeholder="e.g. KG I – IX & XI" class="form-control-modal" />
+          </div>
+          <div class="form-group-modal">
+            <label>Location</label>
+            <input type="text" [(ngModel)]="schoolForm.location" placeholder="e.g. Darsait" class="form-control-modal" />
+          </div>
+        </div>
+        <div class="form-group-modal">
+          <label>Official Website</label>
+          <input type="text" [(ngModel)]="schoolForm.website" placeholder="https://..." class="form-control-modal" />
+        </div>
+        <div class="form-row-modal">
+          <div class="form-group-modal">
+            <label>Display Order</label>
+            <input type="number" [(ngModel)]="schoolForm.displayOrder" class="form-control-modal" />
+          </div>
+          <div class="form-group-modal checkbox-align">
+            <label class="modal-checkbox-label">
+              <input type="checkbox" [(ngModel)]="schoolForm.isActive" />
+              <span>Is Active</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" (click)="showSchoolModal = false">Cancel</button>
+        <button class="btn-modal-save" (click)="saveSchool()">Save School</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Link Modal -->
+  <div *ngIf="showLinkModal" class="modal-backdrop fade-in" (click)="showLinkModal = false">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditingLink ? 'Edit Link #' + linkForm.id : 'Add Portal Link' }}</h3>
+        <button class="btn-modal-close" (click)="showLinkModal = false">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>Link Title <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="linkForm.title" placeholder="e.g. Notice to Parents" class="form-control-modal" />
+        </div>
+        <div class="form-row-modal">
+          <div class="form-group-modal">
+            <label>Section</label>
+            <select [(ngModel)]="linkForm.section" class="form-control-modal">
+              <option value="ADMISSION_LINK">ADMISSION_LINK (Main Page)</option>
+              <option value="FOOTER_LINK">FOOTER_LINK (Footer)</option>
+            </select>
+          </div>
+          <div class="form-group-modal">
+            <label>Link Type</label>
+            <select [(ngModel)]="linkForm.linkType" class="form-control-modal">
+              <option value="PDF_DOCUMENT">PDF Document Viewer</option>
+              <option value="INTERNAL_ROUTE">Internal Route</option>
+              <option value="EXTERNAL_URL">External Link</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group-modal">
+          <label>Target URL / Path <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="linkForm.targetUrl" placeholder="assets/docs/... or https://..." class="form-control-modal" />
+        </div>
+        <div class="form-group-modal">
+          <label>Short Description</label>
+          <input type="text" [(ngModel)]="linkForm.description" placeholder="Short description displayed on card" class="form-control-modal" />
+        </div>
+        <div class="form-row-modal">
+          <div class="form-group-modal">
+            <label>Display Order</label>
+            <input type="number" [(ngModel)]="linkForm.displayOrder" class="form-control-modal" />
+          </div>
+          <div class="form-group-modal checkbox-align">
+            <label class="modal-checkbox-label">
+              <input type="checkbox" [(ngModel)]="linkForm.isActive" />
+              <span>Is Active</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" (click)="showLinkModal = false">Cancel</button>
+        <button class="btn-modal-save" (click)="saveLink()">Save Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Document Preview Modal -->
+  <div *ngIf="isPdfModalOpen" class="pdf-modal-backdrop fade-in" (click)="closePdfModal()">
+    <div class="pdf-modal-container" (click)="$event.stopPropagation()">
+      <div class="pdf-modal-topbar">
+        <div class="pdf-doc-info">
+          <span class="pdf-icon">📄</span>
+          <span class="pdf-doc-title">{{ activeDoc?.title }}</span>
+        </div>
+        <div class="pdf-doc-controls">
+          <button class="btn-pdf-external" (click)="openDocInNewTab()" title="Open in new tab">
+            Open in New Window ↗
           </button>
-          <button class="btn-ctrl-close" (click)="closePdfModal()" title="Close viewer">
+          <button class="btn-pdf-close" (click)="closePdfModal()" title="Close viewer">
             ✕
           </button>
         </div>
       </div>
-
-      <div class="pdf-viewer-body">
-        <object [data]="safeDocUrl" type="application/pdf" class="pdf-embedded-frame">
-          <div class="pdf-fallback-card">
-            <div class="fallback-icon">📑</div>
-            <h4>{{ activeDoc?.title }}</h4>
-            <p>{{ activeDoc?.description }}</p>
-            <div class="fallback-btn-row">
-              <a [href]="activeDoc?.targetUrl" target="_blank" class="btn-download-doc">
-                📥 Download Document (PDF)
-              </a>
-              <button class="btn-dismiss" (click)="closePdfModal()">Close</button>
-            </div>
-          </div>
-        </object>
+      <div class="pdf-viewer-frame-wrap">
+        <iframe *ngIf="safeDocUrl" [src]="safeDocUrl" class="pdf-iframe" title="Document Preview"></iframe>
       </div>
     </div>
   </div>

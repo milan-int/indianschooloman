@@ -29,10 +29,16 @@ namespace Registration.Infrastructure.Data
         public DbSet<PortalSchoolMaster> PortalSchools { get; set; }
         public DbSet<PortalGuidelineMaster> PortalGuidelines { get; set; }
         public DbSet<PortalConfigMaster> PortalConfigs { get; set; }
+        public DbSet<UserAccount> UserAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            // Unique Index for UserAccount Username
+            modelBuilder.Entity<UserAccount>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
             
             // Registration -> Student (1 to 1)
             modelBuilder.Entity<Registration.Domain.Entities.Registration>()
@@ -366,7 +372,29 @@ namespace Registration.Infrastructure.Data
                 new PortalConfigMaster { Id = 2, ConfigKey = "HelplineEmail", ConfigValue = "admissions@indianschoolsoman.com", Section = "CONTACT", Description = "Official Admission Support Email", IsActive = true, IsDeleted = false, CreatedAt = seedDate },
                 new PortalConfigMaster { Id = 3, ConfigKey = "OfficeHours", ConfigValue = "Sunday to Thursday (8:00 AM – 2:00 PM)", Section = "CONTACT", Description = "Helpdesk Office Timings", IsActive = true, IsDeleted = false, CreatedAt = seedDate },
                 new PortalConfigMaster { Id = 4, ConfigKey = "AcademicYear", ConfigValue = "2026–2027", Section = "GENERAL", Description = "Current Admission Academic Year", IsActive = true, IsDeleted = false, CreatedAt = seedDate },
-                new PortalConfigMaster { Id = 5, ConfigKey = "RegistrationFee", ConfigValue = "OMR 15/-", Section = "GENERAL", Description = "Non-refundable application processing fee", IsActive = true, IsDeleted = false, CreatedAt = seedDate }
+                new PortalConfigMaster { Id = 5, ConfigKey = "RegistrationFee", ConfigValue = "OMR 15/-", Section = "GENERAL", Description = "Non-refundable application processing fee", IsActive = true, IsDeleted = false, CreatedAt = seedDate },
+                new PortalConfigMaster { Id = 6, ConfigKey = "PortalLogoUrl", ConfigValue = "assets/logo.png", Section = "BRANDING", Description = "Primary Indian Schools Oman Portal Logo", IsActive = true, IsDeleted = false, CreatedAt = seedDate },
+                new PortalConfigMaster { Id = 7, ConfigKey = "BrandTitle", ConfigValue = "Indian Schools Oman", Section = "BRANDING", Description = "Main Brand Title", IsActive = true, IsDeleted = false, CreatedAt = seedDate },
+                new PortalConfigMaster { Id = 8, ConfigKey = "BrandSubTitle", ConfigValue = "Central Admission System", Section = "BRANDING", Description = "Main Brand Subtitle", IsActive = true, IsDeleted = false, CreatedAt = seedDate }
+            );
+
+            // Seed Initial Administrator Account
+            modelBuilder.Entity<UserAccount>().HasData(
+                new UserAccount
+                {
+                    Id = 1,
+                    Username = "admin",
+                    Email = "admin@indianschoolsoman.com",
+                    PasswordHash = "UIgqRz5m5+ORFr+5oCozyzvQe3YOD9pcxTMf0yucOGA=",
+                    PasswordSalt = "ISOmanAdminSalt2026",
+                    Role = "ADMIN",
+                    FullName = "Portal System Administrator",
+                    PhoneNumber = "+968 2470 2567",
+                    RegistrationId = null,
+                    IsActive = true,
+                    IsDeleted = false,
+                    CreatedAt = seedDate
+                }
             );
         }
     }
